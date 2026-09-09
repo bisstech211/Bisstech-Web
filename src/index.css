@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   BISSTECH design system
+   Black + White + Electric Blue — futuristic, premium, restrained
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* Design tokens — Deep Black + Vibrant Red (BISSTECH) */
+    --color-bg: #0f0f0f;
+    --color-bg-elevated: #1b1b1b;
+    --color-surface: #1e1e1e;
+    --color-surface-hover: #262626;
+    --color-border: rgba(255, 255, 255, 0.07);
+    --color-text: #ffffff;
+    --color-text-muted: #c5c5c5;
+    --color-text-faint: #8a8a8a;
+    --electric: #e50914;
+    --violetglow: #d32f2f;
+
+    --font-display: 'Montserrat', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --radius: 0.5rem;
+    --leading-body: 1.6;
+    --leading-heading: 1.1;
+
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Typography fundamentals — clean sans, scalable rem, comfortable leading */
+  body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: var(--leading-body);
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    letter-spacing: -0.02em;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    @apply bg-ink text-cloud-100 font-sans antialiased;
+    background-color: #0f0f0f;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgba(229, 9, 20, 0.35);
+    color: #fff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display text-white;
+  }
+
+  a {
+    @apply text-inherit;
+  }
+
+  /* Custom scrollbar — subtle, matches the brand */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f0f0f;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 8px;
+    border: 2px solid #0f0f0f;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #303030;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--electric);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Respect reduced motion at the base level */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-bt {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8 lg:px-12;
+  }
+
+  .section-pad {
+    @apply py-24 sm:py-32 lg:py-40;
+  }
+
+  /* Eyebrow / kicker label */
+  .eyebrow {
+    @apply inline-flex items-center gap-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-electric;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-8 bg-gradient-to-r from-electric to-transparent;
+  }
+
+  /* Gradient text — used sparingly */
+  .text-gradient {
+    @apply bg-gradient-to-r from-white via-white to-electric bg-clip-text text-transparent;
+  }
+
+  /* Hairline card with hover lift */
+  .surface {
+    @apply rounded-2xl border border-white/[0.07] bg-white/[0.02];
+    box-shadow: var(--tw-shadow);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2.5 font-display text-sm font-semibold tracking-wide transition-all duration-300 select-none;
+  }
+
+  .btn-primary {
+    @apply btn rounded-full bg-electric px-7 py-3.5 text-white shadow-glow hover:bg-electric-600 hover:shadow-glow-lg;
+  }
+
+  .btn-ghost {
+    @apply btn rounded-full border border-white/15 bg-white/[0.02] px-7 py-3.5 text-cloud-100 backdrop-blur hover:border-electric/50 hover:text-white;
+  }
+
+  /* Subtle grid backdrop */
+  .bg-grid {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  /* Shimmer line for skeletons */
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+}
+
+@layer utilities {
+  .mask-fade-y {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+  }
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  /* Staggered entrance animation backing `.animate-fade-slide-in-*`
+     (used by responsive-hero-banner). Keyframes defined at root below. */
+  .animate-fade-slide-in-1 {
+    animation: fadeSlideIn 0.7s ease-out both 0.15s;
+  }
+  .animate-fade-slide-in-2 {
+    animation: fadeSlideIn 0.7s ease-out both 0.3s;
+  }
+  .animate-fade-slide-in-3 {
+    animation: fadeSlideIn 0.8s ease-out both 0.45s;
+  }
+  .animate-fade-slide-in-4 {
+    animation: fadeSlideIn 0.8s ease-out both 0.6s;
+  }
+}
+
+/* Entrance animation backing the `.animate-fade-slide-in-*` utilities. */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

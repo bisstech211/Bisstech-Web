@@ -1,0 +1,1 @@
+import{j as n}from"./three-DtJ_r49J.js";import{m as s,E as m}from"./index-CY_o2Ei_.js";function x({children:i,className:t,delay:o=0,y:r=28,once:a=!0,amount:e=.2}){return n.jsx(s.div,{className:t,initial:{opacity:0,y:r},whileInView:{opacity:1,y:0},viewport:{once:a,amount:e},transition:{duration:.8,ease:m,delay:o},children:i})}export{x as R};
