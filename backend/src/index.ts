@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -16,6 +17,7 @@ import userRoutes from './modules/users/users.routes';
 import auditRoutes from './modules/audit/audit.routes';
 import contentRoutes from './modules/content/content.routes';
 import { errorHandler, notFound } from './middleware/error';
+import { requireAuth as requireAuthForStats } from './middleware/auth';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '4000', 10);
@@ -90,9 +92,8 @@ app.use('/api/v1/audit', auditRoutes);
 app.use('/api/v1/system', auditRoutes); // health lives there too
 app.use('/api/v1/content', contentRoutes);
 
-// Dashboard stats (quick overview)
-app.get('/api/v1/dashboard/stats', async (_req, res) => {
-  // lightweight — no auth for now, admin will call with token; we keep it open but safe (no secrets)
+// Dashboard stats — protected (admin)
+app.get('/api/v1/dashboard/stats', requireAuthForStats, async (_req, res) => {
   try {
     const { prisma } = await import('./lib/prisma');
     const [leadsTotal, leadsNew, subsTotal, blogsPublished, blogsDraft, servicesTotal, projectsTotal] = await Promise.all([
