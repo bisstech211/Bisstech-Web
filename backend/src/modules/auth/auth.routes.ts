@@ -1,9 +1,11 @@
 import { Router } from 'express';
+import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '../../lib/prisma';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../lib/jwt';
 import { requireAuth, type AuthRequest } from '../../middleware/auth';
+import { sendOtpEmail } from '../../lib/mailer';
 import { ok, fail } from '../../utils/response';
 
 const router = Router();
@@ -23,7 +25,6 @@ router.post('/login', async (req, res) => {
   const accessToken = signAccessToken(payload);
   const refreshToken = signRefreshToken(payload);
 
-  // Audit
   prisma.auditLog.create({ data: { userId: user.id, action: 'login', resource: 'auth', ip: req.ip } }).catch(() => {});
 
   return ok(res, {
@@ -64,6 +65,149 @@ router.post('/change-password', requireAuth, async (req: AuthRequest, res) => {
   const hash = await bcrypt.hash(parsed.data.newPassword, 10);
   await prisma.user.update({ where: { id: user.id }, data: { passwordHash: hash } });
   return ok(res, null, 'Password updated');
+});
+
+// ── Forgot Password — OTP flow ──────────────────────────────────
+const OTP_TTL_MS = 10 * 60 * 1000; // 10 min
+const OTP_RESEND_COOLDOWN_MS = 60 * 1000; // 60s
+const OTP_MAX_ATTEMPTS = 5;
+
+function isStrongPassword(pw: string): string | null {
+  if (pw.length < 8) return 'Password must be at least 8 characters';
+  if (!/[A-Z]/.test(pw)) return 'Password must contain an uppercase letter';
+  if (!/[a-z]/.test(pw)) return 'Password must contain a lowercase letter';
+  if (!/[0-9]/.test(pw)) return 'Password must contain a number';
+  if (!/[^A-Za-z0-9]/.test(pw)) return 'Password must contain a special character';
+  return null;
+}
+
+// POST /api/v1/auth/forgot-password  { email }
+router.post('/forgot-password', async (req, res) => {
+  const parsed = z.object({ email: z.string().email() }).safeParse(req.body);
+  if (!parsed.success) return fail(res, 400, 'Valid email required');
+  const email = parsed.data.email.toLowerCase().trim();
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  // Always respond 200 to avoid email enumeration in production; but for admin UX
+  // we still need to tell the caller if email is not registered.
+  if (!user || !user.isActive) {
+    return fail(res, 404, 'No admin account found with this email');
+  }
+
+  // Resend cooldown: block if last OTP was created < 60s ago
+  const recent = await prisma.passwordResetOtp.findFirst({
+    where: { email },
+    orderBy: { createdAt: 'desc' },
+  });
+  if (recent && Date.now() - new Date(recent.createdAt).getTime() < OTP_RESEND_COOLDOWN_MS) {
+    const wait = Math.ceil((OTP_RESEND_COOLDOWN_MS - (Date.now() - new Date(recent.createdAt).getTime())) / 1000);
+    return fail(res, 429, `Please wait ${wait}s before requesting a new code`);
+  }
+
+  // Invalidate old OTPs for this email
+  await prisma.passwordResetOtp.deleteMany({ where: { email } });
+
+  const otp = String(crypto.randomInt(100000, 1000000)); // 6-digit
+  const otpHash = await bcrypt.hash(otp, 10);
+  const expiresAt = new Date(Date.now() + OTP_TTL_MS);
+
+  await prisma.passwordResetOtp.create({
+    data: { email, otpHash, expiresAt },
+  });
+
+  const sent = await sendOtpEmail(email, otp);
+
+  // Audit (no OTP in log)
+  prisma.auditLog.create({ data: { userId: user.id, action: 'forgot_password_otp_sent', resource: 'auth', ip: req.ip, metadata: JSON.stringify({ email }) } }).catch(() => {});
+
+  if (!sent) return fail(res, 500, 'Failed to send email. Please try again later.');
+  return ok(res, { expiresAt: expiresAt.toISOString() }, 'OTP sent to your email');
+});
+
+// POST /api/v1/auth/verify-otp  { email, otp }
+router.post('/verify-otp', async (req, res) => {
+  const parsed = z.object({ email: z.string().email(), otp: z.string().regex(/^\d{6}$/, 'OTP must be 6 digits') }).safeParse(req.body);
+  if (!parsed.success) return fail(res, 400, 'Valid email and 6-digit OTP required');
+  const email = parsed.data.email.toLowerCase().trim();
+  const { otp } = parsed.data;
+
+  const record = await prisma.passwordResetOtp.findFirst({
+    where: { email },
+    orderBy: { createdAt: 'desc' },
+  });
+  if (!record) return fail(res, 400, 'No OTP found. Please request a new code.');
+  if (new Date(record.expiresAt).getTime() < Date.now()) {
+    await prisma.passwordResetOtp.delete({ where: { id: record.id } }).catch(() => {});
+    return fail(res, 400, 'OTP has expired. Please request a new code.');
+  }
+  if (record.attempts >= OTP_MAX_ATTEMPTS) {
+    await prisma.passwordResetOtp.delete({ where: { id: record.id } }).catch(() => {});
+    return fail(res, 429, 'Too many invalid attempts. Please request a new code.');
+  }
+  if (record.verified) {
+    return ok(res, { verified: true }, 'OTP already verified');
+  }
+
+  const valid = await bcrypt.compare(otp, record.otpHash);
+  if (!valid) {
+    await prisma.passwordResetOtp.update({ where: { id: record.id }, data: { attempts: { increment: 1 } } });
+    const left = OTP_MAX_ATTEMPTS - (record.attempts + 1);
+    return fail(res, 400, `Invalid OTP. ${left > 0 ? `${left} attempt(s) left.` : 'No attempts left.'}`);
+  }
+
+  await prisma.passwordResetOtp.update({ where: { id: record.id }, data: { verified: true } });
+  return ok(res, { verified: true }, 'OTP verified');
+});
+
+// POST /api/v1/auth/reset-password  { email, otp, newPassword, confirmPassword }
+router.post('/reset-password', async (req, res) => {
+  const schema = z.object({
+    email: z.string().email(),
+    otp: z.string().regex(/^\d{6}$/),
+    newPassword: z.string().min(8),
+    confirmPassword: z.string().min(8),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return fail(res, 400, 'Validation error', parsed.error.flatten());
+  const email = parsed.data.email.toLowerCase().trim();
+  const { otp, newPassword, confirmPassword } = parsed.data;
+
+  if (newPassword !== confirmPassword) return fail(res, 400, 'Passwords do not match');
+  const pwError = isStrongPassword(newPassword);
+  if (pwError) return fail(res, 400, pwError);
+
+  const record = await prisma.passwordResetOtp.findFirst({
+    where: { email },
+    orderBy: { createdAt: 'desc' },
+  });
+  if (!record) return fail(res, 400, 'No OTP found. Please request a new code.');
+  if (new Date(record.expiresAt).getTime() < Date.now()) {
+    await prisma.passwordResetOtp.delete({ where: { id: record.id } }).catch(() => {});
+    return fail(res, 400, 'OTP has expired. Please request a new code.');
+  }
+  if (!record.verified) {
+    // Allow reset to verify inline if user skipped verify step but supplies correct OTP
+    const valid = await bcrypt.compare(otp, record.otpHash);
+    if (!valid) {
+      await prisma.passwordResetOtp.update({ where: { id: record.id }, data: { attempts: { increment: 1 } } });
+      return fail(res, 400, 'Invalid OTP');
+    }
+  } else {
+    // Still ensure OTP matches even if previously verified (prevents hijack with only email)
+    const valid = await bcrypt.compare(otp, record.otpHash);
+    if (!valid) return fail(res, 400, 'Invalid OTP');
+  }
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user || !user.isActive) return fail(res, 404, 'Account not found');
+
+  const hash = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash: hash } });
+  await prisma.passwordResetOtp.deleteMany({ where: { email } });
+
+  prisma.auditLog.create({ data: { userId: user.id, action: 'password_reset', resource: 'auth', ip: req.ip } }).catch(() => {});
+
+  return ok(res, null, 'Password has been reset successfully');
 });
 
 export default router;

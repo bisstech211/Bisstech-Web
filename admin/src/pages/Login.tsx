@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../lib/auth';
 
@@ -38,6 +38,9 @@ export function Login() {
         <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="mt-1 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-electric focus:outline-none" />
         <label className="mt-4 block text-xs font-semibold uppercase tracking-widest text-white/60">Password</label>
         <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="mt-1 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white focus:border-electric focus:outline-none" />
+        <div className="mt-2 flex justify-end">
+          <Link to="/forgot-password" className="text-xs font-medium text-white/60 hover:text-electric">Forgot Password?</Link>
+        </div>
         <button disabled={loading} className="mt-6 w-full rounded-full bg-electric py-3 text-sm font-semibold text-white hover:bg-electric-600 disabled:opacity-50">
           {loading ? 'Signing in…' : 'Sign In'}
         </button>
