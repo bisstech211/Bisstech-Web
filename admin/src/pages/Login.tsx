@@ -6,7 +6,7 @@ import { useAuth } from '../lib/auth';
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export function Login() {
-  const [email, setEmail] = useState('admin@bisstech.com');
+  const [email, setEmail] = useState('info.bisstech@gmail.com');
   const [password, setPassword] = useState('Admin@123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ export function Login() {
         <button disabled={loading} className="mt-6 w-full rounded-full bg-electric py-3 text-sm font-semibold text-white hover:bg-electric-600 disabled:opacity-50">
           {loading ? 'Signing in…' : 'Sign In'}
         </button>
-        <p className="mt-4 text-center text-xs text-white/40">Default: admin@bisstech.com / Admin@123</p>
+        <p className="mt-4 text-center text-xs text-white/40">Default: info.bisstech@gmail.com / Admin@123</p>
       </form>
     </div>
   );

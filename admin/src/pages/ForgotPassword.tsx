@@ -117,7 +117,7 @@ export function ForgotPassword() {
           <form onSubmit={sendOtp} className="mt-6">
             <label className="block text-xs font-semibold uppercase tracking-widest text-white/60">Email</label>
             <input
-              value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="admin@bisstech.com" autoFocus
+              value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="info.bisstech@gmail.com" autoFocus
               className="mt-1 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-electric focus:outline-none"
             />
             <button disabled={loading} className="mt-6 w-full rounded-full bg-electric py-3 text-sm font-semibold text-white hover:bg-electric-600 disabled:opacity-50">

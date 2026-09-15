@@ -9,11 +9,16 @@ async function main() {
   // Admin user — password: Admin@123 (change immediately)
   const hash = await bcrypt.hash('Admin@123', 10);
   await prisma.user.upsert({
-    where: { email: 'admin@bisstech.com' },
-    create: { email: 'admin@bisstech.com', name: 'Super Admin', passwordHash: hash, role: 'SUPER_ADMIN' },
+    where: { email: 'info.bisstech@gmail.com' },
+    create: { email: 'info.bisstech@gmail.com', name: 'Super Admin', passwordHash: hash, role: 'SUPER_ADMIN' },
     update: {},
   });
-  console.log('  ✓ admin@bisstech.com / Admin@123');
+  console.log('  ✓ info.bisstech@gmail.com / Admin@123');
+  // Keep legacy admin@bisstech.com for backwards compat if it exists — no-op otherwise
+  const legacy = await prisma.user.findUnique({ where: { email: 'admin@bisstech.com' } });
+  if (legacy) {
+    console.log('  • legacy admin@bisstech.com still present');
+  }
 
   // Site settings
   await prisma.siteSettings.upsert({
