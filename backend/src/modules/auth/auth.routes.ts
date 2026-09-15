@@ -111,16 +111,22 @@ router.post('/forgot-password', async (req, res) => {
   const otpHash = await bcrypt.hash(otp, 10);
   const expiresAt = new Date(Date.now() + OTP_TTL_MS);
 
-  await prisma.passwordResetOtp.create({
+  const createdOtp = await prisma.passwordResetOtp.create({
     data: { email, otpHash, expiresAt },
   });
 
-  const sent = await sendOtpEmail(email, otp);
+  const result = await sendOtpEmail(email, otp);
 
-  // Audit (no OTP in log)
+  if (!result.success) {
+    // Roll back the OTP so the user can retry immediately (no 60s cooldown trap on failed delivery)
+    await prisma.passwordResetOtp.delete({ where: { id: createdOtp.id } }).catch(() => {});
+    console.error(`[AUTH] forgot-password email failed for ${email}: ${result.error}`);
+    return fail(res, 500, result.error);
+  }
+
+  // Audit only on successful delivery (no OTP in log)
   prisma.auditLog.create({ data: { userId: user.id, action: 'forgot_password_otp_sent', resource: 'auth', ip: req.ip, metadata: JSON.stringify({ email }) } }).catch(() => {});
 
-  if (!sent) return fail(res, 500, 'Failed to send email. Please try again later.');
   return ok(res, { expiresAt: expiresAt.toISOString() }, 'OTP sent to your email');
 });
 
