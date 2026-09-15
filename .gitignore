@@ -1,1 +1,50 @@
-node_modules
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Builds
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# Vite / TS cache
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
+# Env — keep .env.example tracked, ignore real .env
+.env
+.env.local
+.env.*.local
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Prisma DB (dev sqlite)
+prisma/dev.db
+prisma/prisma/dev.db
+dev.db
+*.db
+*.db-journal
+
+# Uploads / generated
+uploads/
+backend/uploads/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+logs/
+
+# Temp / junk from earlier experiments (not frontend source)
+_character_nobg.png
+_character_nobg.webp
+_first_b64.txt
+_last_b64.txt
