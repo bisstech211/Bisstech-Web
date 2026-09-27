@@ -33,7 +33,7 @@ export function BlogShare({ title, url }: { title: string; url: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs font-semibold uppercase tracking-[0.15em] text-cloud-500">
+      <span className="mr-1 text-xs font-semibold uppercase tracking-[0.15em] text-espresso-500">
         Share
       </span>
       {links.map((l) => (
@@ -42,14 +42,14 @@ export function BlogShare({ title, url }: { title: string; url: string }) {
           href={l.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-cloud-300 transition-colors hover:border-electric/30 hover:text-white"
+          className="rounded-full border border-espresso-950/10 bg-white px-3 py-1.5 text-xs font-medium text-espresso-600 transition-colors hover:border-coffee/30 hover:text-espresso-950"
         >
           {l.label}
         </a>
       ))}
       <button
         onClick={copy}
-        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-cloud-300 transition-colors hover:border-electric/30 hover:text-white"
+        className="inline-flex items-center gap-1.5 rounded-full border border-espresso-950/10 bg-white px-3 py-1.5 text-xs font-medium text-espresso-600 transition-colors hover:border-coffee/30 hover:text-espresso-950"
         aria-label="Copy link"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Link2 className="h-3.5 w-3.5" />}

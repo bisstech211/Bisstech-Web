@@ -37,8 +37,8 @@ export function BlogTOC({ content }: { content: string }) {
   if (!headings.length) return null;
 
   return (
-    <nav aria-label="Table of contents" className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-5">
-      <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+    <nav aria-label="Table of contents" className="rounded-2xl border border-espresso-950/08 bg-cream-50 p-5">
+      <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-500">
         On this page
       </p>
       <ul className="mt-4 space-y-2">
@@ -50,7 +50,7 @@ export function BlogTOC({ content }: { content: string }) {
                 e.preventDefault();
                 document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
-              className={`block text-sm leading-snug transition-colors ${active === h.id ? 'font-medium text-electric' : 'text-cloud-400 hover:text-white'}`}
+              className={`block text-sm leading-snug transition-colors ${active === h.id ? 'font-medium text-coffee' : 'text-espresso-600 hover:text-espresso-950'}`}
             >
               {h.text}
             </a>

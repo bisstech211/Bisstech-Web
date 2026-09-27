@@ -39,24 +39,24 @@ export default function About() {
       />
       <main>
         {/* Page hero */}
-        <section className="relative overflow-hidden pt-40 pb-24" aria-label="About BISSTECH">
-          <div aria-hidden className="absolute inset-0 bg-grid mask-fade-y opacity-50" />
-          <div aria-hidden className="absolute -top-24 left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-electric/[0.12] blur-[130px]" />
+        <section className="relative overflow-hidden pt-40 pb-24 bg-cream-50" aria-label="About BISSTECH">
+          <div aria-hidden className="absolute inset-0 bg-grid-cream mask-fade-y opacity-60" />
+          <div aria-hidden className="absolute -top-24 left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-coffee/10 blur-[130px]" />
 
           <div className="container-bt relative text-center">
             <Reveal>
               <p className="eyebrow justify-center">About BISSTECH</p>
             </Reveal>
             <Reveal delay={0.1}>
-              <h1 className="mx-auto mt-6 max-w-4xl font-display text-display-lg font-bold text-white">
+              <h1 className="mx-auto mt-6 max-w-4xl font-display text-display-lg font-bold text-espresso-950">
                 Where <span className="text-gradient">strategy</span>,{' '}
                 <span className="text-gradient">technology</span> and{' '}
                 <span className="text-gradient">creativity</span> compound.
               </h1>
             </Reveal>
             <Reveal delay={0.2}>
-              <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-cloud-300 sm:text-lg">
-                We are a global digital growth, technology, AI &amp; creative agency. One team that
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-espresso-600 sm:text-lg">
+                We are a global digital growth, technology, AI & creative agency. One team that
                 takes your business from idea to build to growth — then keeps compounding it with
                 data, creative and automation.
               </p>
@@ -67,7 +67,7 @@ export default function About() {
                 {CAPABILITIES.map((c) => (
                   <span
                     key={c.title}
-                    className="rounded-full border border-white/10 bg-white/[0.03] px-5 py-2 font-display text-sm font-semibold text-cloud-200"
+                    className="rounded-full border border-espresso-950/10 bg-white px-5 py-2 font-display text-sm font-semibold text-espresso-700"
                   >
                     {c.title}
                   </span>
@@ -78,7 +78,7 @@ export default function About() {
         </section>
 
         {/* Who we are */}
-        <section className="section-pad border-t border-white/[0.06]" aria-label="Who we are">
+        <section className="section-pad border-t border-espresso-950/06" aria-label="Who we are">
           <div className="container-bt grid gap-16 lg:grid-cols-2">
             <SectionHeading
               eyebrow="Who we are"
@@ -106,10 +106,10 @@ export default function About() {
             <div className="grid gap-4 sm:grid-cols-2">
               {BELIEFS.map((b, i) => (
                 <Reveal key={b.title} delay={i * 0.06}>
-                  <div className="h-full rounded-2xl border border-white/[0.07] bg-white/[0.02] p-6 transition-colors duration-500 hover:border-electric/30">
-                    <b.icon className="h-5 w-5 text-electric" />
-                    <h3 className="mt-4 font-display text-base font-semibold text-white">{b.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-cloud-400">{b.detail}</p>
+                  <div className="h-full rounded-2xl border border-espresso-950/06 bg-white p-6 transition-colors duration-500 hover:border-coffee/30 hover:shadow-card-light-hover">
+                    <b.icon className="h-5 w-5 text-coffee" />
+                    <h3 className="mt-4 font-display text-base font-semibold text-espresso-950">{b.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-espresso-600">{b.detail}</p>
                   </div>
                 </Reveal>
               ))}
@@ -118,27 +118,27 @@ export default function About() {
         </section>
 
         {/* Mission & Vision */}
-        <section className="section-pad bg-ink-950/60" aria-label="Mission and vision">
+        <section className="section-pad bg-cream-50" aria-label="Mission and vision">
           <div className="container-bt grid gap-5 md:grid-cols-2">
             <Reveal>
-              <div className="h-full rounded-2xl border border-white/[0.07] bg-white/[0.02] p-8">
-                <span className="grid h-12 w-12 place-items-center rounded-xl bg-electric/15 text-electric">
+              <div className="h-full rounded-2xl border border-espresso-950/06 bg-white p-8">
+                <span className="grid h-12 w-12 place-items-center rounded-xl bg-coffee/15 text-coffee">
                   <Target className="h-5 w-5" />
                 </span>
-                <h2 className="mt-6 font-display text-2xl font-semibold text-white">Our mission</h2>
-                <p className="mt-4 text-sm leading-relaxed text-cloud-300">
+                <h2 className="mt-6 font-display text-2xl font-semibold text-espresso-950">Our mission</h2>
+                <p className="mt-4 text-sm leading-relaxed text-espresso-600">
                   To give ambitious businesses a single, technology-driven partner that turns
                   strategy, creative and AI into measurable growth — without the agency runaround.
                 </p>
               </div>
             </Reveal>
             <Reveal delay={0.1}>
-              <div className="h-full rounded-2xl border border-white/[0.07] bg-white/[0.02] p-8">
-                <span className="grid h-12 w-12 place-items-center rounded-xl bg-violetglow/15 text-violetglow">
+              <div className="h-full rounded-2xl border border-espresso-950/06 bg-white p-8">
+                <span className="grid h-12 w-12 place-items-center rounded-xl bg-espresso-800/15 text-espresso-700">
                   <Eye className="h-5 w-5" />
                 </span>
-                <h2 className="mt-6 font-display text-2xl font-semibold text-white">Our vision</h2>
-                <p className="mt-4 text-sm leading-relaxed text-cloud-300">
+                <h2 className="mt-6 font-display text-2xl font-semibold text-espresso-950">Our vision</h2>
+                <p className="mt-4 text-sm leading-relaxed text-espresso-600">
                   A world where every ambitious brand — from startup to enterprise — can compete
                   like the best in the world, powered by intelligent technology and world-class
                   creativity.
@@ -163,10 +163,10 @@ export default function About() {
             <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {WHY_BISSTECH.map((w, i) => (
                 <Reveal key={w.title} delay={i * 0.05}>
-                  <div className="h-full rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7 hover:border-electric/30">
-                    <span className="font-display text-sm font-bold text-electric/60">0{i + 1}</span>
-                    <h3 className="mt-4 font-display text-lg font-semibold text-white">{w.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-cloud-400">{w.detail}</p>
+                  <div className="h-full rounded-2xl border border-espresso-950/06 bg-white p-7 hover:border-coffee/30 hover:shadow-card-light-hover">
+                    <span className="font-display text-sm font-bold text-coffee/60">0{i + 1}</span>
+                    <h3 className="mt-4 font-display text-lg font-semibold text-espresso-950">{w.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-espresso-600">{w.detail}</p>
                   </div>
                 </Reveal>
               ))}
@@ -175,7 +175,7 @@ export default function About() {
         </section>
 
         {/* Our process */}
-        <section className="section-pad bg-ink-950/60" aria-label="Our process">
+        <section className="section-pad bg-cream-50" aria-label="Our process">
           <div className="container-bt">
             <SectionHeading
               align="center"
@@ -189,10 +189,10 @@ export default function About() {
             <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
               {PROCESS.map((p, i) => (
                 <Reveal key={p.step} delay={i * 0.06}>
-                  <div className="h-full rounded-2xl border border-white/[0.07] bg-white/[0.02] p-6">
-                    <span className="font-display text-3xl font-bold text-white/10">{p.step}</span>
-                    <h3 className="mt-4 font-display text-lg font-semibold text-white">{p.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-cloud-400">{p.detail}</p>
+                  <div className="h-full rounded-2xl border border-espresso-950/06 bg-white p-6">
+                    <span className="font-display text-3xl font-bold text-espresso-950/10">{p.step}</span>
+                    <h3 className="mt-4 font-display text-lg font-semibold text-espresso-950">{p.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-espresso-600">{p.detail}</p>
                   </div>
                 </Reveal>
               ))}
@@ -210,14 +210,14 @@ export default function About() {
                   Where the <span className="text-gradient">best tools</span> meet bold ideas.
                 </>
               }
-              description="We build with a modern, proven stack — and we’re fluent in the AI tools reshaping how businesses run. That combination lets us ship faster, measure better and design bolder."
+              description="We build with a modern, proven stack — and we're fluent in the AI tools reshaping how businesses run. That combination lets us ship faster, measure better and design bolder."
             />
             <Reveal delay={0.1}>
               <div className="flex flex-wrap gap-3">
                 {STACK_HIGHLIGHTS.map((t) => (
                   <span
                     key={t}
-                    className="rounded-full border border-white/10 bg-white/[0.02] px-5 py-2.5 font-display text-sm font-medium text-cloud-200 transition-colors hover:border-electric/40 hover:text-white"
+                    className="rounded-full border border-espresso-950/10 bg-white px-5 py-2.5 font-display text-sm font-medium text-espresso-700 transition-colors hover:border-coffee/40 hover:text-coffee"
                   >
                     {t}
                   </span>

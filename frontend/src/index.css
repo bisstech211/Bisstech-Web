@@ -4,22 +4,24 @@
 
 /* ============================================================
    BISSTECH design system
-   Black + White + Electric Blue — futuristic, premium, restrained
+   White + Coffee/Warm Brown — clean, premium, professional
    ============================================================ */
 
 @layer base {
   :root {
-    /* Design tokens — Deep Black + Vibrant Red (BISSTECH) */
-    --color-bg: #0f0f0f;
-    --color-bg-elevated: #1b1b1b;
-    --color-surface: #1e1e1e;
-    --color-surface-hover: #262626;
-    --color-border: rgba(255, 255, 255, 0.07);
-    --color-text: #ffffff;
-    --color-text-muted: #c5c5c5;
-    --color-text-faint: #8a8a8a;
-    --electric: #e50914;
-    --violetglow: #d32f2f;
+    /* Design tokens — White + Coffee/Warm Brown (BISSTECH) */
+    --color-bg: #ffffff;
+    --color-bg-elevated: #fafafa;
+    --color-surface: #fafafa;
+    --color-surface-hover: #f5f5f5;
+    --color-border: rgba(61, 43, 31, 0.1);
+    --color-text: #1a1a1a;
+    --color-text-muted: #4a4a4a;
+    --color-text-faint: #8a7d6e;
+    --coffee: #6f4e37;
+    --coffee-light: #a08d7a;
+    --coffee-dark: #3d2b1f;
+    --gold: #c9a962;
 
     --font-display: 'Montserrat', 'Inter', system-ui, sans-serif;
     --font-body: 'Inter', system-ui, sans-serif;
@@ -27,7 +29,309 @@
     --leading-body: 1.6;
     --leading-heading: 1.1;
 
-    color-scheme: dark;
+    /* Dynamic settings CSS variables (with fallbacks to ORIGINAL design - White + Coffee) */
+    --color-primary: var(--color-primary, #6f4e37);
+    --color-secondary: var(--color-secondary, #a08d7a);
+    --color-accent: var(--color-accent, #c9a962);
+    --color-background: var(--color-background, #ffffff);
+    --color-surface: var(--color-surface, #fafafa);
+    --color-heading: var(--color-heading, #1a1a1a);
+    --color-body: var(--color-body, #3d2b1f);
+    --color-muted: var(--color-muted, #8a7d6e);
+    --color-border: var(--color-border, rgba(61, 43, 31, 0.1));
+    --color-button: var(--color-button, #6f4e37);
+    --color-button-hover: var(--color-button-hover, #3d2b1f);
+    --color-button-text: var(--color-button-text, #ffffff);
+    --color-button-hover-text: var(--color-button-hover-text, #ffffff);
+    --color-link: var(--color-link, #6f4e37);
+    --color-link-hover: var(--color-link-hover, #a08d7a);
+    --color-footer-background: var(--color-footer-background, #fafafa);
+    --color-footer-text: var(--color-footer-text, #4a4a4a);
+    --color-footer-heading: var(--color-footer-heading, #1a1a1a);
+    --color-footer-link: var(--color-footer-link, #4a4a4a);
+    --color-footer-link-hover: var(--color-footer-link-hover, #6f4e37);
+    --color-header-background: var(--color-header-background, rgba(255, 255, 255, 0.95));
+    --color-header-text: var(--color-header-text, #1a1a1a);
+    --color-header-link-hover: var(--color-header-link-hover, #6f4e37);
+    --color-bottom-section-background: var(--color-bottom-section-background, #f5f5f5);
+
+    --font-primary: var(--font-primary, 'Inter, system-ui, sans-serif');
+    --font-heading: var(--font-heading, 'Montserrat, Inter, system-ui, sans-serif');
+    --font-body: var(--font-body, 'Inter, system-ui, sans-serif');
+    --font-weight-heading: var(--font-weight-heading, '700');
+    --font-weight-body: var(--font-weight-body, '400');
+    --font-size-base: var(--font-size-base, 16px);
+    --font-size-h1: var(--font-size-h1, 48px);
+    --font-size-h2: var(--font-size-h2, 36px);
+    --font-size-h3: var(--font-size-h3, 24px);
+    --font-size-paragraph: var(--font-size-paragraph, 16px);
+    --line-height: var(--line-height, 1.6);
+    --letter-spacing: var(--letter-spacing, 0px);
+
+    --header-bg: var(--header-bg, rgba(255, 255, 255, 0.95));
+    --header-bg-opacity: var(--header-bg-opacity, 0.95);
+    --header-blur: var(--header-blur, 20px);
+    --header-border-color: var(--header-border-color, rgba(61, 43, 31, 0.1));
+    --header-border-width: var(--header-border-width, 1px);
+    --header-shadow: var(--header-shadow, 0 4px 30px rgba(61, 43, 31, 0.08));
+    --header-height-desktop: var(--header-height-desktop, 72px);
+    --header-height-tablet: var(--header-height-tablet, 68px);
+    --header-height-mobile: var(--header-height-mobile, 64px);
+    --nav-font-size-desktop: var(--nav-font-size-desktop, 14px);
+    --nav-font-size-tablet: var(--nav-font-size-tablet, 13px);
+    --nav-font-size-mobile: var(--nav-font-size-mobile, 13px);
+    --nav-font-weight: var(--nav-font-weight, 500);
+    --nav-spacing-desktop: var(--nav-spacing-desktop, 32px);
+    --nav-spacing-tablet: var(--nav-spacing-tablet, 24px);
+    --nav-spacing-mobile: var(--nav-spacing-mobile, 16px);
+    --nav-hover-color: var(--nav-hover-color, #6f4e37);
+    --nav-active-color: var(--nav-active-color, #1a1a1a);
+    --nav-underline: var(--nav-underline, 1);
+    --nav-underline-thickness: var(--nav-underline-thickness, 1px);
+    --nav-underline-speed: var(--nav-underline-speed, 0.3s);
+    --header-btn-text: var(--header-btn-text, Start a Project);
+    --header-btn-bg: var(--header-btn-bg, #6f4e37);
+    --header-btn-hover-bg: var(--header-btn-hover-bg, #3d2b1f);
+
+    --btn-bg: var(--btn-bg, #6f4e37);
+    --btn-text: var(--btn-text, #ffffff);
+    --btn-border: var(--btn-border, #6f4e37);
+    --btn-border-width: var(--btn-border-width, 0px);
+    --btn-radius: var(--btn-radius, 9999px);
+    --btn-padding-desktop: var(--btn-padding-desktop, 16px 32px);
+    --btn-padding-tablet: var(--btn-padding-tablet, 14px 28px);
+    --btn-padding-mobile: var(--btn-padding-mobile, 12px 24px);
+    --btn-font-size-desktop: var(--btn-font-size-desktop, 14px);
+    --btn-font-size-tablet: var(--btn-font-size-tablet, 13px);
+    --btn-font-size-mobile: var(--btn-font-size-mobile, 13px);
+    --btn-font-weight: var(--btn-font-weight, 600);
+    --btn-hover-bg: var(--btn-hover-bg, #3d2b1f);
+    --btn-hover-text: var(--btn-hover-text, #ffffff);
+    --btn-hover-border: var(--btn-hover-border, #3d2b1f);
+    --btn-hover-scale: var(--btn-hover-scale, 1.02);
+    --btn-hover-shadow: var(--btn-hover-shadow, 0 8px 25px rgba(111, 78, 55, 0.3));
+    --btn-transition: var(--btn-transition, 0.3s);
+
+    --text-hover-effect: var(--text-hover-effect, color);
+    --text-hover-color: var(--text-hover-color, #6f4e37);
+    --text-hover-opacity: var(--text-hover-opacity, 0.9);
+    --text-hover-underline: var(--text-hover-underline, 0);
+    --text-hover-underline-thickness: var(--text-hover-underline-thickness, 2px);
+    --text-hover-underline-offset: var(--text-hover-underline-offset, 4px);
+    --text-hover-letter-spacing: var(--text-hover-letter-spacing, 0px);
+    --text-hover-transform: var(--text-hover-transform, none);
+    --text-hover-scale: var(--text-hover-scale, 1);
+    --text-hover-glow: var(--text-hover-glow, none);
+    --text-hover-shadow: var(--text-hover-shadow, none);
+    --text-hover-transition: var(--text-hover-transition, 0.3s);
+    --text-hover-easing: var(--text-hover-easing, ease-out);
+
+    --link-color: var(--link-color, #1a1a1a);
+    --link-hover-color: var(--link-hover-color, #6f4e37);
+    --link-hover-effect: var(--link-hover-effect, color);
+    --link-hover-underline: var(--link-hover-underline, 1);
+    --link-hover-underline-thickness: var(--link-hover-underline-thickness, 2px);
+    --link-hover-transition: var(--link-hover-transition, 0.3s);
+    --link-hover-easing: var(--link-hover-easing, ease-out);
+
+    --card-hover-effect: var(--card-hover-effect, lift);
+    --card-hover-scale: var(--card-hover-scale, 1.02);
+    --card-hover-translate-y: var(--card-hover-translate-y, -8px);
+    --card-hover-shadow: var(--card-hover-shadow, 0 20px 40px rgba(61, 43, 31, 0.15));
+    --card-hover-border-color: var(--card-hover-border-color, rgba(111, 78, 55, 0.2));
+    --card-hover-bg-change: var(--card-hover-bg-change, rgba(111, 78, 55, 0.05));
+    --card-hover-glow: var(--card-hover-glow, none);
+    --card-hover-image-zoom: var(--card-hover-image-zoom, 1.05);
+    --card-hover-overlay-opacity: var(--card-hover-overlay-opacity, 0.05);
+    --card-hover-radius: var(--card-hover-radius, 16px);
+    --card-hover-transition: var(--card-hover-transition, 0.4s);
+    --card-hover-easing: var(--card-hover-easing, ease-out);
+
+    --footer-bg: var(--footer-bg, #fafafa);
+    --footer-text: var(--footer-text, #4a4a4a);
+    --footer-heading: var(--footer-heading, #1a1a1a);
+    --footer-link: var(--footer-link, #4a4a4a);
+    --footer-link-hover: var(--footer-link-hover, #6f4e37);
+    --footer-border-color: var(--footer-border-color, rgba(61, 43, 31, 0.1));
+    --footer-border-width: var(--footer-border-width, 1px);
+    --footer-spacing-desktop: var(--footer-spacing-desktop, 64px);
+    --footer-spacing-tablet: var(--footer-spacing-tablet, 48px);
+    --footer-spacing-mobile: var(--footer-spacing-mobile, 32px);
+    --footer-padding-desktop: var(--footer-padding-desktop, 80px);
+    --footer-padding-tablet: var(--footer-padding-tablet, 60px);
+    --footer-padding-mobile: var(--footer-padding-mobile, 40px);
+    --footer-col-spacing-desktop: var(--footer-col-spacing-desktop, 48px);
+    --footer-col-spacing-tablet: var(--footer-col-spacing-tablet, 32px);
+    --footer-col-spacing-mobile: var(--footer-col-spacing-mobile, 24px);
+
+    --footer-hover-effect: var(--footer-hover-effect, color);
+    --footer-hover-color: var(--footer-hover-color, #6f4e37);
+    --footer-hover-underline: var(--footer-hover-underline, 1);
+    --footer-hover-underline-thickness: var(--footer-hover-underline-thickness, 2px);
+    --footer-hover-transition: var(--footer-hover-transition, 0.3s);
+    --footer-hover-easing: var(--footer-hover-easing, ease-out);
+
+    /* Bottom Section Hover Settings */
+    /* Hero CTA Buttons (woven-light-hero.tsx) */
+    --hero-cta-primary-bg: var(--hero-cta-primary-bg, #6f4e37);
+    --hero-cta-primary-hover-bg: var(--hero-cta-primary-hover-bg, #3d2b1f);
+    --hero-cta-primary-text: var(--hero-cta-primary-text, #ffffff);
+    --hero-cta-primary-hover-text: var(--hero-cta-primary-hover-text, #ffffff);
+    --hero-cta-primary-border: var(--hero-cta-primary-border, #6f4e37);
+    --hero-cta-primary-hover-border: var(--hero-cta-primary-hover-border, #3d2b1f);
+    --hero-cta-primary-shadow: var(--hero-cta-primary-shadow, 0 8px 25px rgba(111, 78, 55, 0.3));
+    --hero-cta-primary-hover-shadow: var(--hero-cta-primary-hover-shadow, 0 12px 35px rgba(61, 43, 31, 0.4));
+    --hero-cta-primary-scale: var(--hero-cta-primary-scale, 1.02);
+    --hero-cta-primary-transition: var(--hero-cta-primary-transition, 0.3s);
+
+    --hero-cta-secondary-bg: var(--hero-cta-secondary-bg, transparent);
+    --hero-cta-secondary-hover-bg: var(--hero-cta-secondary-hover-bg, #6f4e37);
+    --hero-cta-secondary-text: var(--hero-cta-secondary-text, #6f4e37);
+    --hero-cta-secondary-hover-text: var(--hero-cta-secondary-hover-text, #ffffff);
+    --hero-cta-secondary-border: var(--hero-cta-secondary-border, #6f4e37);
+    --hero-cta-secondary-hover-border: var(--hero-cta-secondary-hover-border, #6f4e37);
+    --hero-cta-secondary-shadow: var(--hero-cta-secondary-shadow, none);
+    --hero-cta-secondary-hover-shadow: var(--hero-cta-secondary-hover-shadow, 0 8px 25px rgba(111, 78, 55, 0.3));
+    --hero-cta-secondary-scale: var(--hero-cta-secondary-scale, 1.02);
+    --hero-cta-secondary-transition: var(--hero-cta-secondary-transition, 0.3s);
+
+    /* CTA Section Buttons (CTASection.tsx) */
+    --cta-section-primary-bg: var(--cta-section-primary-bg, #2b2118);
+    --cta-section-primary-hover-bg: var(--cta-section-primary-hover-bg, #1a1611);
+    --cta-section-primary-text: var(--cta-section-primary-text, #fafafa);
+    --cta-section-primary-hover-text: var(--cta-section-primary-hover-text, #fafafa);
+    --cta-section-primary-shadow: var(--cta-section-primary-shadow, 0 2px 12px -2px rgba(61,43,31,0.08), 0 8px 30px -8px rgba(61,43,31,0.12));
+    --cta-section-primary-hover-shadow: var(--cta-section-primary-hover-shadow, 0 4px 20px -4px rgba(61,43,31,0.1), 0 16px 40px -12px rgba(61,43,31,0.15));
+    --cta-section-primary-scale: var(--cta-section-primary-scale, 1.0);
+    --cta-section-primary-transition: var(--cta-section-primary-transition, 0.3s);
+    --cta-section-primary-arrow-translate-x: var(--cta-section-primary-arrow-translate-x, 4px);
+
+    --cta-section-secondary-bg: var(--cta-section-secondary-bg, #ffffff);
+    --cta-section-secondary-hover-bg: var(--cta-section-secondary-hover-bg, #f5f5f5);
+    --cta-section-secondary-text: var(--cta-section-secondary-text, #3d2b1f);
+    --cta-section-secondary-hover-text: var(--cta-section-secondary-hover-text, #1a1a1a);
+    --cta-section-secondary-border: var(--cta-section-secondary-border, rgba(111, 78, 55, 0.1));
+    --cta-section-secondary-hover-border: var(--cta-section-secondary-hover-border, #6f4e37);
+    --cta-section-secondary-shadow: var(--cta-section-secondary-shadow, 0 2px 12px -2px rgba(61,43,31,0.08), 0 8px 30px -8px rgba(61,43,31,0.12));
+    --cta-section-secondary-hover-shadow: var(--cta-section-secondary-hover-shadow, 0 4px 20px -4px rgba(61,43,31,0.1), 0 16px 40px -12px rgba(61,43,31,0.15));
+    --cta-section-secondary-scale: var(--cta-section-secondary-scale, 1.0);
+    --cta-section-secondary-transition: var(--cta-section-secondary-transition, 0.3s);
+
+    /* Service Cards (ServicesSection.tsx) */
+    --service-card-bg: var(--service-card-bg, #ffffff);
+    --service-card-hover-bg: var(--service-card-hover-bg, #ffffff);
+    --service-card-border-color: var(--service-card-border-color, rgba(111, 78, 55, 0.06));
+    --service-card-hover-border-color: var(--service-card-hover-border-color, #6f4e37);
+    --service-card-shadow: var(--service-card-shadow, 0 2px 12px -2px rgba(61,43,31,0.08), 0 8px 30px -8px rgba(61,43,31,0.12));
+    --service-card-hover-shadow: var(--service-card-hover-shadow, 0 4px 20px -4px rgba(61,43,31,0.1), 0 16px 40px -12px rgba(61,43,31,0.15));
+    --service-card-translate-y: var(--service-card-translate-y, -4px);
+    --service-card-scale: var(--service-card-scale, 1.0);
+    --service-card-image-zoom: var(--service-card-image-zoom, 1.05);
+    --service-card-image-transition: var(--service-card-image-transition, 0.7s);
+    --service-card-border-width: var(--service-card-border-width, 1px);
+    --service-card-hover-border-width: var(--service-card-hover-border-width, 1px);
+    --service-card-bottom-bar-height: var(--service-card-bottom-bar-height, 2px);
+    --service-card-bottom-bar-color: var(--service-card-bottom-bar-color, #6f4e37);
+    --service-card-bottom-bar-transition: var(--service-card-bottom-bar-transition, 0.5s);
+    --service-card-icon-bg: var(--service-card-icon-bg, rgba(111, 78, 55, 0.1));
+    --service-card-icon-hover-bg: var(--service-card-icon-hover-bg, #6f4e37);
+    --service-card-icon-text: var(--service-card-icon-text, #6f4e37);
+    --service-card-icon-hover-text: var(--service-card-icon-hover-text, #fafafa);
+    --service-card-icon-scale: var(--service-card-icon-scale, 1.0);
+    --service-card-icon-transition: var(--service-card-icon-transition, 0.5s);
+    --service-card-explore-text-color: var(--service-card-explore-text-color, #8a7d6e);
+    --service-card-explore-hover-text-color: var(--service-card-explore-hover-text-color, #6f4e37);
+    --service-card-arrow-color: var(--service-card-arrow-color, #8a7d6e);
+    --service-card-arrow-hover-color: var(--service-card-arrow-hover-color, #6f4e37);
+    --service-card-arrow-translate-x: var(--service-card-arrow-translate-x, 4px);
+    --service-card-arrow-translate-y: var(--service-card-arrow-translate-y, -4px);
+    --service-card-arrow-transition: var(--service-card-arrow-transition, 0.3s);
+
+    /* Footer Branding (Footer.tsx) */
+    --footer-logo-hover-opacity: var(--footer-logo-hover-opacity, 0.8);
+    --footer-logo-hover-scale: var(--footer-logo-hover-scale, 1.02);
+    --footer-logo-transition: var(--footer-logo-transition, 0.3s);
+    --footer-email-color: var(--footer-email-color, #6f4e37);
+    --footer-email-hover-color: var(--footer-email-hover-color, #3d2b1f);
+    --footer-email-underline: var(--footer-email-underline, 1);
+    --footer-email-underline-thickness: var(--footer-email-underline-thickness, 1px);
+    --footer-email-transition: var(--footer-email-transition, 0.2s);
+
+    /* Footer Navigation Links */
+    --footer-nav-link-color: var(--footer-nav-link-color, #4a4a4a);
+    --footer-nav-link-hover-color: var(--footer-nav-link-hover-color, #6f4e37);
+    --footer-nav-link-underline: var(--footer-nav-link-underline, 0);
+    --footer-nav-link-underline-thickness: var(--footer-nav-link-underline-thickness, 2px);
+    --footer-nav-link-underline-offset: var(--footer-nav-link-underline-offset, 4px);
+    --footer-nav-link-transition: var(--footer-nav-link-transition, 0.2s);
+    --footer-nav-link-easing: var(--footer-nav-link-easing, ease-out);
+
+    /* Footer Services Links */
+    --footer-service-link-color: var(--footer-service-link-color, #4a4a4a);
+    --footer-service-link-hover-color: var(--footer-service-link-hover-color, #6f4e37);
+    --footer-service-link-underline: var(--footer-service-link-underline, 0);
+    --footer-service-link-underline-thickness: var(--footer-service-link-underline-thickness, 2px);
+    --footer-service-link-underline-offset: var(--footer-service-link-underline-offset, 4px);
+    --footer-service-link-transition: var(--footer-service-link-transition, 0.2s);
+    --footer-service-link-easing: var(--footer-service-link-easing, ease-out);
+
+    /* Footer Social Icons */
+    --footer-social-icon-size: var(--footer-social-icon-size, 20px);
+    --footer-social-icon-color: var(--footer-social-icon-color, #4a4a4a);
+    --footer-social-icon-hover-color: var(--footer-social-icon-hover-color, #6f4e37);
+    --footer-social-icon-bg: var(--footer-social-icon-bg, transparent);
+    --footer-social-icon-hover-bg: var(--footer-social-icon-hover-bg, rgba(111, 78, 55, 0.1));
+    --footer-social-icon-border-radius: var(--footer-social-icon-border-radius, 12px);
+    --footer-social-icon-scale: var(--footer-social-icon-scale, 1.1);
+    --footer-social-icon-rotation: var(--footer-social-icon-rotation, 0deg);
+    --footer-social-icon-shadow: var(--footer-social-icon-shadow, none);
+    --footer-social-icon-hover-shadow: var(--footer-social-icon-hover-shadow, 0 4px 15px rgba(111, 78, 55, 0.2));
+    --footer-social-icon-transition: var(--footer-social-icon-transition, 0.3s);
+
+    /* Footer CTA Button */
+    --footer-cta-bg: var(--footer-cta-bg, #6f4e37);
+    --footer-cta-hover-bg: var(--footer-cta-hover-bg, #3d2b1f);
+    --footer-cta-text: var(--footer-cta-text, #ffffff);
+    --footer-cta-hover-text: var(--footer-cta-hover-text, #ffffff);
+    --footer-cta-shadow: var(--footer-cta-shadow, 0 0 0 1px rgba(111,78,55,0.15), 0 8px 40px -8px rgba(61,43,31,0.25));
+    --footer-cta-hover-shadow: var(--footer-cta-hover-shadow, 0 0 0 1px rgba(111,78,55,0.2), 0 20px 70px -12px rgba(61,43,31,0.35));
+    --footer-cta-scale: var(--footer-cta-scale, 1.0);
+    --footer-cta-arrow-translate-x: var(--footer-cta-arrow-translate-x, 4px);
+    --footer-cta-arrow-translate-y: var(--footer-cta-arrow-translate-y, -4px);
+    --footer-cta-transition: var(--footer-cta-transition, 0.3s);
+
+    /* Copyright Bar Links */
+    --copyright-link-color: var(--copyright-link-color, #4a4a4a);
+    --copyright-link-hover-color: var(--copyright-link-hover-color, #6f4e37);
+    --copyright-link-underline: var(--copyright-link-underline, 0);
+    --copyright-link-underline-thickness: var(--copyright-link-underline-thickness, 1px);
+    --copyright-link-underline-offset: var(--copyright-link-underline-offset, 3px);
+    --copyright-link-transition: var(--copyright-link-transition, 0.2s);
+    --copyright-link-easing: var(--copyright-link-easing, ease-out);
+
+    /* Bottom Decorative Text (Watermark) */
+    --watermark-color: var(--watermark-color, rgba(111, 78, 55, 0.05));
+    --watermark-hover-color: var(--watermark-hover-color, rgba(111, 78, 55, 0.15));
+    --watermark-scale: var(--watermark-scale, 1.0);
+    --watermark-transition: var(--watermark-transition, 0.5s);
+    --watermark-opacity: var(--watermark-opacity, 1.0);
+
+    --enable-hover: var(--enable-hover, 1);
+    --hover-speed: var(--hover-speed, 0.3s);
+    --hover-intensity: var(--hover-intensity, 1);
+    --reduced-motion: var(--reduced-motion, 0);
+
+    --logo-url: var(--logo-url, none);
+    --mobile-logo-url: var(--mobile-logo-url, none);
+    --dark-logo-url: var(--dark-logo-url, none);
+    --logo-width-desktop: var(--logo-width-desktop, 140px);
+    --logo-width-tablet: var(--logo-width-tablet, 120px);
+    --logo-width-mobile: var(--logo-width-mobile, 100px);
+    --logo-height-desktop: var(--logo-height-desktop, 36px);
+    --logo-height-tablet: var(--logo-height-tablet, 32px);
+    --logo-height-mobile: var(--logo-height-mobile, 28px);
+
+    color-scheme: light;
   }
 
   html {
@@ -61,8 +365,8 @@
   }
 
   body {
-    @apply bg-ink text-cloud-100 font-sans antialiased;
-    background-color: #0f0f0f;
+    @apply bg-white text-coffee-900 font-sans antialiased;
+    background-color: #ffffff;
     overflow-x: hidden;
     text-rendering: optimizeLegibility;
   }
@@ -90,19 +394,19 @@
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #0f0f0f;
+    background: #f5f5f5;
   }
   ::-webkit-scrollbar-thumb {
-    background: #262626;
+    background: #d4c8b8;
     border-radius: 8px;
-    border: 2px solid #0f0f0f;
+    border: 2px solid #f5f5f5;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #303030;
+    background: #c4b4a0;
   }
 
   :focus-visible {
-    outline: 2px solid var(--electric);
+    outline: 2px solid var(--coffee);
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -130,22 +434,23 @@
 
   /* Eyebrow / kicker label */
   .eyebrow {
-    @apply inline-flex items-center gap-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-electric;
+    @apply inline-flex items-center gap-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-coffee-800;
   }
   .eyebrow::before {
     content: '';
-    @apply h-px w-8 bg-gradient-to-r from-electric to-transparent;
+    @apply h-px w-8 bg-gradient-to-r from-coffee-800 to-transparent;
   }
 
   /* Gradient text — used sparingly */
   .text-gradient {
-    @apply bg-gradient-to-r from-white via-white to-electric bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-coffee-800 via-gold-600 to-coffee-800 bg-clip-text text-transparent;
   }
 
   /* Hairline card with hover lift */
   .surface {
-    @apply rounded-2xl border border-white/[0.07] bg-white/[0.02];
+    @apply rounded-2xl border border-coffee-100/50 bg-white/80;
     box-shadow: var(--tw-shadow);
+    backdrop-filter: blur(8px);
   }
 
   .btn {
@@ -153,25 +458,101 @@
   }
 
   .btn-primary {
-    @apply btn rounded-full bg-electric px-7 py-3.5 text-white shadow-glow hover:bg-electric-600 hover:shadow-glow-lg;
+    @apply btn rounded-full bg-coffee px-7 py-3.5 text-white shadow-glow-coffee hover:bg-espresso hover:shadow-glow-coffee-lg;
   }
 
   .btn-ghost {
-    @apply btn rounded-full border border-white/15 bg-white/[0.02] px-7 py-3.5 text-cloud-100 backdrop-blur hover:border-electric/50 hover:text-white;
+    @apply btn rounded-full border border-coffee-200/50 bg-coffee-50/50 text-coffee-900 backdrop-blur hover:border-coffee/50 hover:bg-coffee/10;
   }
 
   /* Subtle grid backdrop */
   .bg-grid {
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgba(61, 43, 31, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(61, 43, 31, 0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  /* Cream grid for light sections */
+  .bg-grid-cream {
+    background-image: linear-gradient(to right, rgba(61, 43, 31, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(61, 43, 31, 0.035) 1px, transparent 1px);
     background-size: 72px 72px;
   }
 
   /* Shimmer line for skeletons */
   .shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    background: linear-gradient(90deg, transparent, rgba(61, 43, 31, 0.06), transparent);
     background-size: 200% 100%;
     animation: shimmer 2.5s linear infinite;
+  }
+
+  /* Dynamic footer link styles using CSS variables */
+  .footer-link {
+    color: var(--footer-link-color, #a1a1aa);
+    transition: color 0.2s ease;
+  }
+  .footer-link:hover {
+    color: var(--footer-link-hover-color, #e50914);
+  }
+  .footer-icon {
+    color: var(--footer-link-color, #a1a1aa);
+    transition: color 0.2s ease;
+  }
+  .footer-icon:hover {
+    color: var(--footer-link-hover-color, #e50914);
+  }
+  .footer-cta-btn {
+    background-color: var(--footer-cta-bg, #e50914);
+    transition: background-color 0.3s ease;
+  }
+  .footer-cta-btn:hover {
+    background-color: var(--footer-cta-hover-bg, #d32f2f);
+  }
+
+  /* Dynamic text hover effects */
+  .text-hover-effect {
+    transition: all var(--text-hover-transition, 0.3s) var(--text-hover-easing, ease-out);
+  }
+  .text-hover-effect:hover {
+    color: var(--text-hover-color, #e50914);
+    opacity: var(--text-hover-opacity, 0.8);
+  }
+  .text-hover-effect:hover[data-underline="true"] {
+    text-decoration: underline;
+    text-decoration-thickness: var(--text-hover-underline-thickness, 2px);
+    text-underline-offset: var(--text-hover-underline-offset, 4px);
+  }
+
+  /* Dynamic link hover effects */
+  .link-hover-effect {
+    transition: all var(--link-hover-transition, 0.3s) var(--link-hover-easing, ease-out);
+  }
+  .link-hover-effect:hover {
+    color: var(--link-hover-color, #e50914);
+  }
+  .link-hover-effect:hover[data-underline="true"] {
+    text-decoration: underline;
+    text-decoration-thickness: var(--link-hover-underline-thickness, 2px);
+  }
+
+  /* Dynamic card hover effects */
+  .card-hover-effect {
+    transition: all var(--card-hover-transition, 0.4s) var(--card-hover-easing, ease-out);
+  }
+  .card-hover-effect:hover {
+    transform: translateY(var(--card-hover-translate-y, -8px)) scale(var(--card-hover-scale, 1.02));
+    box-shadow: var(--card-hover-shadow, 0 20px 40px rgba(0, 0, 0, 0.4));
+    border-color: var(--card-hover-border-color, rgba(229, 9, 20, 0.3));
+  }
+
+  /* Dynamic footer hover effects */
+  .footer-hover-effect:hover {
+    color: var(--footer-hover-color, #e50914);
+    transition: all var(--footer-hover-transition, 0.3s) var(--footer-hover-easing, ease-out);
+  }
+  .footer-hover-effect:hover[data-underline="true"] {
+    text-decoration: underline;
+    text-decoration-thickness: var(--footer-hover-underline-thickness, 2px);
   }
 }
 
@@ -191,7 +572,7 @@
     transform-style: preserve-3d;
   }
   .glass {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
@@ -228,4 +609,27 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Scroll reveal animation for footer watermark */
+@keyframes footerWatermarkReveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@theme inline {
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+}
+
+/* Utility classes for footer watermark animations */
+.animate-footer-watermark-reveal {
+  animation: footerWatermarkReveal 1.2s ease-out forwards;
+  opacity: 0; /* Start hidden for scroll reveal */
 }

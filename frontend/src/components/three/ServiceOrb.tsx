@@ -2,8 +2,8 @@ import { useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-/** Accent color per service (index matches SERVICES order). */
-export const SERVICE_COLORS = ['#e50914', '#ff3b30', '#f07373', '#d32f2f', '#ff6b6b'];
+/** Accent color per service (index matches SERVICES order). Coffee/espresso palette. */
+export const SERVICE_COLORS = ['#6F4E37', '#8B6B53', '#564235', '#48352C', '#3D2B1F', '#2D1E15', '#7A5A45'];
 
 function Orb({ active }: { active: number }) {
   const knotRef = useRef<THREE.Mesh>(null);
@@ -13,7 +13,7 @@ function Orb({ active }: { active: number }) {
   const innerMatRef = useRef<THREE.MeshBasicMaterial>(null);
 
   const target = useMemo(() => new THREE.Color(SERVICE_COLORS[active % SERVICE_COLORS.length]), [active]);
-  const current = useMemo(() => new THREE.Color('#e50914'), []);
+  const current = useMemo(() => new THREE.Color('#6F4E37'), []);
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
@@ -45,8 +45,8 @@ function Orb({ active }: { active: number }) {
         <torusKnotGeometry args={[0.85, 0.24, 140, 18]} />
         <meshStandardMaterial
           ref={matRef}
-          color="#e50914"
-          emissive="#e50914"
+          color="#6F4E37"
+          emissive="#6F4E37"
           emissiveIntensity={0.9}
           metalness={0.7}
           roughness={0.2}
@@ -57,11 +57,11 @@ function Orb({ active }: { active: number }) {
       </mesh>
       <mesh ref={innerRef}>
         <icosahedronGeometry args={[0.38, 1]} />
-        <meshBasicMaterial ref={innerMatRef} color="#e50914" wireframe transparent opacity={0.4} />
+        <meshBasicMaterial ref={innerMatRef} color="#6F4E37" wireframe transparent opacity={0.4} />
       </mesh>
       <mesh ref={ringRef}>
         <torusGeometry args={[1.45, 0.012, 8, 90]} />
-        <meshBasicMaterial color="#e83a3a" transparent opacity={0.4} />
+        <meshBasicMaterial color="#8B6B53" transparent opacity={0.4} />
       </mesh>
     </group>
   );
@@ -72,7 +72,7 @@ function Scene({ active }: { active: number }) {
     <>
       <ambientLight intensity={0.5} />
       <pointLight position={[3, 3, 4]} intensity={30} color="#ffffff" />
-      <pointLight position={[-3, -2, -3]} intensity={18} color="#d32f2f" />
+      <pointLight position={[-3, -2, -3]} intensity={18} color="#48352C" />
       <Orb active={active} />
     </>
   );

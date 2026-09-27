@@ -53,7 +53,7 @@ const useParticles = (containerRef: React.RefObject<HTMLDivElement>) => {
         if (p.y < 0 || p.y > h) p.dy *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(229, 9, 20, ${p.opacity * 0.5})`;
+        ctx.fillStyle = `rgba(111, 78, 55, ${p.opacity * 0.5})`;
         ctx.fill();
       });
       requestAnimationFrame(animate);
@@ -102,7 +102,7 @@ export const HowWeWork3D = () => {
   };
 
   return (
-    <section ref={containerRef} className="relative overflow-hidden bg-ink py-24">
+    <section ref={containerRef} className="relative overflow-hidden bg-cream-50 py-24">
       {/* 3D container with perspective */}
       <motion.div
         className="relative z-10 max-w-6xl mx-auto px-6"
@@ -116,11 +116,11 @@ export const HowWeWork3D = () => {
         onMouseLeave={handleMouseLeave}
       >
         <div className="text-center mb-16">
-          <span className="text-sm font-semibold tracking-[0.2em] text-electric uppercase">Our Process</span>
-          <h2 className="font-display text-4xl font-bold text-white mt-2 sm:text-5xl">
+          <span className="text-sm font-semibold tracking-[0.2em] text-coffee uppercase">Our Process</span>
+          <h2 className="font-display text-4xl font-bold text-espresso-950 mt-2 sm:text-5xl">
             How We Work
           </h2>
-          <p className="mt-4 text-base text-cloud-300 max-w-2xl mx-auto">
+          <p className="mt-4 text-base text-espresso-600 max-w-2xl mx-auto">
             A transparent, collaborative system that turns your vision into measurable growth.
           </p>
         </div>
@@ -134,9 +134,9 @@ export const HowWeWork3D = () => {
                 key={step.id}
                 className={cn(
                   'relative rounded-2xl p-6 cursor-pointer transition-all duration-500',
-                  'border border-white/5 bg-white/[0.03] backdrop-blur-sm',
-                  'hover:border-electric/40',
-                  isActive && 'border-electric/60 bg-white/[0.06]'
+                  'border border-espresso-950/06 bg-white backdrop-blur-sm',
+                  'hover:border-coffee/30 hover:shadow-card-light',
+                  isActive && 'border-coffee/50 bg-white shadow-card-light-hover'
                 )}
                 style={{
                   transformStyle: 'preserve-3d',
@@ -145,26 +145,26 @@ export const HowWeWork3D = () => {
                   scale: isActive ? 1.05 : 1,
                   translateZ: isActive ? 30 : 0,
                   boxShadow: isActive
-                    ? '0 0 40px rgba(229, 9, 20, 0.25), inset 0 0 40px rgba(229, 9, 20, 0.05)'
-                    : '0 0 0 rgba(229, 9, 20, 0)',
+                    ? '0 0 40px rgba(111, 78, 55, 0.2), inset 0 0 40px rgba(111, 78, 55, 0.03)'
+                    : '0 0 0 rgba(111, 78, 55, 0)',
                 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 onClick={() => handleStepClick(step.id)}
               >
                 {/* Watermark number */}
-                <div className="absolute -top-4 -right-2 text-7xl font-bold text-white/5 select-none pointer-events-none">
+                <div className="absolute -top-4 -right-2 text-7xl font-bold text-espresso-950/05 select-none pointer-events-none">
                   {step.number}
                 </div>
 
                 {/* Step index (small) */}
-                <span className="text-xs font-medium text-electric/70 tracking-widest">
+                <span className="text-xs font-medium text-coffee/70 tracking-widest">
                   {step.number}
                 </span>
 
-                <h3 className="mt-3 font-display text-lg font-semibold text-white">
+                <h3 className="mt-3 font-display text-lg font-semibold text-espresso-950">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-sm text-cloud-300 leading-relaxed">
+                <p className="mt-2 text-sm text-espresso-600 leading-relaxed">
                   {step.description}
                 </p>
 
@@ -176,8 +176,8 @@ export const HowWeWork3D = () => {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.4 }}
                     style={{
-                      boxShadow: '0 0 30px rgba(229, 9, 20, 0.3), inset 0 0 30px rgba(229, 9, 20, 0.05)',
-                      border: '1px solid rgba(229, 9, 20, 0.4)',
+                      boxShadow: '0 0 30px rgba(111, 78, 55, 0.2), inset 0 0 30px rgba(111, 78, 55, 0.03)',
+                      border: '1px solid rgba(111, 78, 55, 0.3)',
                     }}
                   />
                 )}
@@ -187,15 +187,15 @@ export const HowWeWork3D = () => {
         </div>
 
         {/* Progress connector (line with animated fill) */}
-        <div className="relative mt-12 h-1 w-full rounded-full bg-white/10 overflow-hidden">
+        <div className="relative mt-12 h-1 w-full rounded-full bg-espresso-950/08 overflow-hidden">
           <motion.div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-electric to-electric/60 rounded-full"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-coffee to-coffee/60 rounded-full"
             initial={{ width: '0%' }}
             animate={{ width: `${((active + 1) / STEPS.length) * 100}%` }}
             transition={{ duration: 0.6, ease: 'easeInOut' }}
           />
         </div>
-        <div className="flex justify-between mt-2 text-xs text-cloud-500">
+        <div className="flex justify-between mt-2 text-xs text-espresso-400">
           <span>Start</span>
           <span>Scale</span>
         </div>

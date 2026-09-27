@@ -41,7 +41,7 @@ export function CursorGlow() {
         translateX: '-50%',
         translateY: '-50%',
         background:
-          'radial-gradient(circle at center, rgba(229,9,20,0.10) 0%, rgba(229,9,20,0.04) 40%, transparent 70%)',
+          'radial-gradient(circle at center, rgba(111,78,55,0.10) 0%, rgba(111,78,55,0.04) 40%, transparent 70%)',
       }}
     />
   );

@@ -83,11 +83,13 @@ export function SiteStructuredData() {
       makesOffer: [
         { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Digital Marketing' } },
         { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Website Development' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'App Development' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Software Development' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI Automation' } },
         {
           '@type': 'Offer',
           itemOffered: { '@type': 'Service', name: 'E-commerce & Quick Commerce Management' },
         },
-        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI Automation' } },
         { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Graphic Design' } },
       ],
     });

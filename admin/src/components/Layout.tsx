@@ -1,11 +1,13 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Briefcase, Users, Settings, LogOut, Image as ImageIcon, MessageSquare, Globe, Link2, Shield, Activity, Webhook, Mail } from 'lucide-react';
+import { LayoutDashboard, FileText, Briefcase, Users, Settings, LogOut, Image as ImageIcon, MessageSquare, Globe, Link2, Shield, Activity, Webhook, Mail, FileImage } from 'lucide-react';
 import { useAuth } from '../lib/auth';
+import { ToastContainer } from '../hooks/useToast';
 
 const nav = [
   { label: 'Dashboard', path: '/', icon: LayoutDashboard },
   { label: 'Blogs', path: '/blogs', icon: FileText },
   { label: 'Services', path: '/services', icon: Briefcase },
+  { label: 'Case Studies', path: '/case-studies', icon: FileImage },
   { label: 'Leads', path: '/leads', icon: MessageSquare },
   { label: 'Newsletter', path: '/newsletter', icon: Mail },
   { label: 'Media', path: '/media', icon: ImageIcon },
@@ -57,6 +59,7 @@ export function Layout() {
         <main className="flex-1 p-4 lg:p-8">
           <Outlet />
         </main>
+        <ToastContainer />
       </div>
     </div>
   );

@@ -1,19 +1,21 @@
 import { useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, MessageCircle, Send, CheckCircle2, ArrowRight, Instagram, Linkedin, Facebook, Loader2 } from 'lucide-react';
+import { Mail, MessageCircle, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { SEO } from '../lib/seo';
 import { SERVICES } from '../data/services';
 import { CONTACT, SOCIALS } from '../data/site';
 import { Reveal } from '../components/ui/Reveal';
 import { EASE } from '../lib/motion';
 import { cn } from '../lib/utils';
-import { API_BASE } from '../lib/api';
+import { Button } from '../components/ui/Button';
+import { useWebsiteSettings } from '../hooks/useWebsiteSettings';
 
 const BUDGETS = ['Under $1k', '$1k – $5k', '$5k – $15k', '$15k – $50k', '$50k+', 'Not sure yet'];
 
 type FormState = {
   name: string;
   email: string;
+  countryCode: string;
   phone: string;
   company: string;
   service: string;
@@ -24,6 +26,7 @@ type FormState = {
 const empty: FormState = {
   name: '',
   email: '',
+  countryCode: '+91',
   phone: '',
   company: '',
   service: '',
@@ -32,12 +35,18 @@ const empty: FormState = {
 };
 
 export default function Contact() {
+  const { settings } = useWebsiteSettings();
   const [form, setForm] = useState<FormState>(empty);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [honeypot, setHoneypot] = useState('');
+
+  // Header button settings for consistent hover effect
+  const headerBtnBg = settings.header?.buttonBgColor || '#6f4e37';
+  const headerBtnHoverBg = settings.header?.buttonHoverBg || '#3d2b1f';
+  const headerBtnText = settings.header?.buttonText || 'Start a Project';
 
   const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -59,10 +68,11 @@ export default function Contact() {
 
     // UTM + referrer + device capture (graceful — backend is optional)
     const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const fullPhone = form.countryCode && form.phone.trim() ? `${form.countryCode} ${form.phone.trim()}` : undefined;
     const payload: Record<string, unknown> = {
       name: form.name.trim(),
       email: form.email.trim(),
-      phone: form.phone.trim() || undefined,
+      phone: fullPhone,
       company: form.company.trim() || undefined,
       service: form.service,
       budget: form.budget || undefined,
@@ -79,7 +89,7 @@ export default function Contact() {
     };
 
     try {
-      const res = await fetch(`${API_BASE}/leads/submit`, {
+      const res = await fetch('/api/v1/leads/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -110,22 +120,22 @@ export default function Contact() {
         path="/contact"
       />
       <main>
-        <section className="relative overflow-hidden pt-40 pb-24" aria-label="Contact BISSTECH">
-          <div aria-hidden className="absolute inset-0 bg-grid mask-fade-y opacity-50" />
-          <div aria-hidden className="absolute -top-24 left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-electric/[0.12] blur-[130px]" />
+        <section className="relative overflow-hidden pt-40 pb-24 bg-cream-50" aria-label="Contact BISSTECH">
+          <div aria-hidden className="absolute inset-0 bg-grid-cream mask-fade-y opacity-60" />
+          <div aria-hidden className="absolute -top-24 left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-coffee/10 blur-[130px]" />
 
           <div className="container-bt relative">
             <Reveal>
               <p className="eyebrow">Contact</p>
             </Reveal>
             <Reveal delay={0.08}>
-              <h1 className="mt-5 max-w-3xl font-display text-display-lg font-bold text-white">
-                Let’s build something that <span className="text-gradient">matters</span>.
+              <h1 className="mt-5 max-w-3xl font-display text-display-lg font-bold text-espresso-950">
+                Let's build something that <span className="text-gradient">matters</span>.
               </h1>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-cloud-300 sm:text-lg">
-                Tell us where you want to go. We’ll respond within one business day with honest next
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-espresso-600 sm:text-lg">
+                Tell us where you want to go. We'll respond within one business day with honest next
                 steps.
               </p>
             </Reveal>
@@ -136,8 +146,8 @@ export default function Contact() {
           <div className="container-bt grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
             {/* Form / success */}
             <Reveal>
-              <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-ink-900/60 p-6 shadow-card sm:p-10">
-                <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric/50 to-transparent" />
+              <div className="relative overflow-hidden rounded-3xl border border-espresso-950/08 bg-white p-6 shadow-card-light sm:p-10">
+                <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-coffee/50 to-transparent" />
 
                 <AnimatePresence mode="wait">
                   {submitted ? (
@@ -153,19 +163,19 @@ export default function Contact() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1, rotate: [0, 12, -6, 0] }}
                         transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-                        className="grid h-16 w-16 place-items-center rounded-full bg-electric/20 text-electric"
+                        className="grid h-16 w-16 place-items-center rounded-full bg-coffee/20 text-coffee"
                       >
                         <CheckCircle2 className="h-8 w-8" />
                       </motion.div>
-                      <h2 className="mt-8 font-display text-3xl font-bold text-white">Message received.</h2>
-                      <p className="mt-3 max-w-md text-sm leading-relaxed text-cloud-300">
-                        Thanks, {form.name.split(' ')[0] || 'friend'}. We’re reviewing your brief and
-                        will be in touch at <span className="text-electric-200">{form.email}</span> within one
+                      <h2 className="mt-8 font-display text-3xl font-bold text-espresso-950">Message received.</h2>
+                      <p className="mt-3 max-w-md text-sm leading-relaxed text-espresso-600">
+                        Thanks, {form.name.split(' ')[0] || 'friend'}. We're reviewing your brief and
+                        will be in touch at <span className="text-coffee">{form.email}</span> within one
                         business day.
                       </p>
                       <a
                         href={`mailto:${CONTACT.email}?subject=Project%20enquiry%20from%20${encodeURIComponent(form.company || 'your%20website')}`}
-                        className="mt-8 inline-flex items-center gap-2 font-display text-sm font-semibold text-electric transition-colors hover:text-electric-300"
+                        className="mt-8 inline-flex items-center gap-2 font-display text-sm font-semibold text-coffee transition-colors hover:text-espresso-950"
                       >
                         Need an instant reply? Email us now <ArrowRight className="h-4 w-4" />
                       </a>
@@ -201,13 +211,31 @@ export default function Contact() {
                         />
                       </Field>
                       <Field label="Phone">
-                        <input
-                          className={fieldCls(false)}
-                          value={form.phone}
-                          onChange={set('phone')}
-                          placeholder="+91 8597 029133"
-                          autoComplete="tel"
-                        />
+                        <div className="flex gap-2">
+                          <select
+                            value={form.countryCode || '+91'}
+                            onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value }))}
+                            className={cn('rounded-xl border bg-cream-100 px-3 py-3.5 text-sm text-espresso-950 transition-colors duration-300 border-espresso-950/10 focus:border-coffee/60 focus:outline-none focus:ring-1 focus:ring-coffee/30 shrink-0 w-[85px]', false)}
+                          >
+                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                            <option value="+61">🇦🇺 +61</option>
+                            <option value="+49">🇩🇪 +49</option>
+                            <option value="+33">🇫🇷 +33</option>
+                            <option value="+81">🇯🇵 +81</option>
+                            <option value="+86">🇨🇳 +86</option>
+                            <option value="+971">🇦🇪 +971</option>
+                            <option value="+65">🇸🇬 +65</option>
+                          </select>
+                          <input
+                            className={cn(fieldCls(false), 'flex-1')}
+                            value={form.phone}
+                            onChange={set('phone')}
+                            placeholder="12345 67890"
+                            autoComplete="tel"
+                          />
+                        </div>
                       </Field>
                       <Field label="Company">
                         <input
@@ -250,7 +278,7 @@ export default function Contact() {
                             className={cn(fieldCls(!!errors.details), 'resize-none')}
                             value={form.details}
                             onChange={set('details')}
-                            placeholder="Tell us about your goals, timeline, current challenges…"
+                            placeholder="Tell us about your goals, timeline, current challenges..."
                           />
                         </Field>
                       </div>
@@ -266,30 +294,44 @@ export default function Contact() {
                         placeholder="Leave this field empty"
                       />
                       {apiError && (
-                        <div className="sm:col-span-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300" role="alert">
+                        <div className="sm:col-span-2 rounded-xl border border-coffee/40 bg-coffee/10 px-4 py-3 text-sm text-espresso-950" role="alert">
                           {apiError}
                         </div>
                       )}
                       <div className="sm:col-span-2 mt-1 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-xs text-cloud-500">
+                        <p className="text-xs text-espresso-400">
                           By submitting, you agree to be contacted by BISSTECH about your enquiry.
                         </p>
-                        <button
+                        <Button
                           type="submit"
                           disabled={submitting}
-                          className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-electric px-8 py-4 font-display text-sm font-semibold text-white shadow-glow transition-all duration-300 hover:bg-electric-600 hover:shadow-glow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                          to="/contact"
+                          size="md"
+                          variant="primary"
+                          withArrow
+                          style={{
+                            backgroundColor: headerBtnBg,
+                          }}
+                          onMouseEnter={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.backgroundColor = headerBtnHoverBg;
+                          }}
+                          onMouseLeave={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.backgroundColor = headerBtnBg;
+                          }}
                         >
                           {submitting ? (
                             <>
-                              <Loader2 className="h-4 w-4 animate-spin" /> Sending…
+                              <Loader2 className="h-4 w-4 animate-spin" /> Sending...
                             </>
                           ) : (
                             <>
-                              Start Your Project
-                              <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                              {headerBtnText}
+                              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                             </>
                           )}
-                        </button>
+                        </Button>
                       </div>
                     </motion.form>
                   )}
@@ -300,51 +342,51 @@ export default function Contact() {
             {/* Contact info */}
             <div className="space-y-4">
               <Reveal delay={0.1}>
-                <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7">
-                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+                <div className="rounded-2xl border border-espresso-950/06 bg-white p-7">
+                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-400">
                     Email
                   </p>
                   <a
                     href={`mailto:${CONTACT.email}`}
-                    className="mt-3 inline-flex items-center gap-2.5 font-display text-base font-medium text-white transition-colors hover:text-electric"
+                    className="mt-3 inline-flex items-center gap-2.5 font-display text-base font-medium text-espresso-950 transition-colors hover:text-coffee"
                   >
-                    <Mail className="h-4 w-4 text-electric" />
+                    <Mail className="h-4 w-4 text-coffee" />
                     {CONTACT.email}
                   </a>
                 </div>
               </Reveal>
 
               <Reveal delay={0.16}>
-                <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7">
-                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+                <div className="rounded-2xl border border-espresso-950/06 bg-white p-7">
+                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-400">
                     WhatsApp
                   </p>
                   <a
                     href={CONTACT.whatsapp}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="mt-3 inline-flex items-center gap-2.5 font-display text-base font-medium text-white transition-colors hover:text-electric"
+                    className="mt-3 inline-flex items-center gap-2.5 font-display text-base font-medium text-espresso-950 transition-colors hover:text-coffee"
                   >
-                    <MessageCircle className="h-4 w-4 text-electric" />
+                    <MessageCircle className="h-4 w-4 text-coffee" />
                     {CONTACT.whatsappDisplay}
                   </a>
                 </div>
               </Reveal>
 
               <Reveal delay={0.22}>
-                <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7">
-                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+                <div className="rounded-2xl border border-espresso-950/06 bg-white p-7">
+                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-400">
                     Follow us
                   </p>
                   <div className="mt-4 flex gap-3">
-                    {SOCIALS.filter((s) => ![Instagram, Linkedin, Facebook].includes(s.icon) || true).map((s) => (
+                    {SOCIALS.map((s) => (
                       <a
                         key={s.label}
                         href={s.href}
                         target="_blank"
                         rel="noreferrer noopener"
                         aria-label={s.label}
-                        className="grid h-11 w-11 place-items-center rounded-full border border-white/10 text-cloud-300 transition-all duration-300 hover:border-electric hover:bg-electric hover:text-white"
+                        className="grid h-11 w-11 place-items-center rounded-full border border-espresso-950/10 text-espresso-600 transition-all duration-300 hover:border-coffee hover:bg-coffee hover:text-cream-50"
                       >
                         <s.icon className="h-4 w-4" />
                       </a>
@@ -354,11 +396,11 @@ export default function Contact() {
               </Reveal>
 
               <Reveal delay={0.28}>
-                <div className="rounded-2xl bg-gradient-to-br from-electric/20 to-violetglow/10 p-7">
-                  <p className="font-display text-sm font-semibold text-white">Prefer email?</p>
-                  <p className="mt-2 text-sm leading-relaxed text-cloud-300">
+                <div className="rounded-2xl bg-gradient-to-br from-coffee/20 to-espresso-700/10 p-7">
+                  <p className="font-display text-sm font-semibold text-espresso-950">Prefer email?</p>
+                  <p className="mt-2 text-sm leading-relaxed text-espresso-600">
                     Send us your brief directly at{' '}
-                    <a href={`mailto:${CONTACT.email}`} className="text-electric-200 underline-offset-4 hover:underline">
+                    <a href={`mailto:${CONTACT.email}`} className="text-coffee underline-offset-4 hover:underline">
                       {CONTACT.email}
                     </a>{' '}
                     — we usually reply within a day.
@@ -386,9 +428,9 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-2 flex items-center gap-1 font-display text-xs font-semibold uppercase tracking-[0.15em] text-cloud-400">
+      <span className="mb-2 flex items-center gap-1 font-display text-xs font-semibold uppercase tracking-[0.15em] text-espresso-400">
         {label}
-        {required && <span aria-hidden className="text-electric">*</span>}
+        {required && <span aria-hidden className="text-coffee">*</span>}
       </span>
       {children}
       {error && (
@@ -397,7 +439,7 @@ function Field({
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="mt-1.5 block text-xs text-red-400"
+            className="mt-1.5 block text-xs text-coffee"
             role="alert"
           >
             {error}
@@ -410,9 +452,9 @@ function Field({
 
 function fieldCls(hasError: boolean) {
   return cn(
-    'w-full rounded-xl border bg-ink-950/60 px-4 py-3.5 text-sm text-white placeholder:text-cloud-600 transition-colors duration-300',
+    'w-full rounded-xl border bg-cream-100 px-4 py-3.5 text-sm text-espresso-950 placeholder:text-espresso-400 transition-colors duration-300',
     hasError
-      ? 'border-red-500/60 focus:border-red-400 focus:outline-none'
-      : 'border-white/10 focus:border-electric/60 focus:outline-none focus:ring-1 focus:ring-electric/30',
+      ? 'border-coffee/60 focus:border-coffee/40 focus:outline-none focus:ring-1 focus:ring-coffee/30'
+      : 'border-espresso-950/10 focus:border-coffee/60 focus:outline-none focus:ring-1 focus:ring-coffee/30',
   );
 }

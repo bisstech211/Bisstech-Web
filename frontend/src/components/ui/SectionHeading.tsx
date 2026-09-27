@@ -27,12 +27,12 @@ export function SectionHeading({
           <span className={cn('eyebrow', centered && 'justify-center')}>{eyebrow}</span>
         </Reveal>
       )}
-      <h2 className="mt-5 font-display text-display-md font-semibold text-white">
+      <h2 className="mt-5 font-display text-display-md font-semibold text-espresso-950">
         {title}
       </h2>
       {description && (
         <Reveal delay={0.12} amount={0.5}>
-          <p className="mt-6 text-base leading-relaxed text-cloud-400 sm:text-lg">{description}</p>
+          <p className="mt-6 text-base leading-relaxed text-espresso-600 sm:text-lg">{description}</p>
         </Reveal>
       )}
     </div>

@@ -7,10 +7,10 @@ export function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link
       to={`/blog/${post.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] transition-all duration-500 hover:-translate-y-1 hover:border-electric/20 hover:bg-white/[0.04] hover:shadow-glow"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-espresso-950/06 bg-white transition-all duration-500 hover:-translate-y-1 hover:border-coffee/20 hover:shadow-card-light-hover"
     >
       {/* Image */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-ink-900">
+      <div className="relative aspect-[16/10] overflow-hidden bg-espresso-900">
         <img
           src={post.featuredImage}
           alt={post.title}
@@ -19,7 +19,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
           onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
         />
         <div className="absolute left-3 top-3">
-          <Badge tone="electric" className="backdrop-blur-md text-[11px]">
+          <Badge tone="default" className="backdrop-blur-md text-[11px]">
             {post.category}
           </Badge>
         </div>
@@ -27,26 +27,26 @@ export function BlogCard({ post }: { post: BlogPost }) {
 
       {/* Body */}
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <h3 className="font-display text-[17px] font-semibold leading-snug text-white line-clamp-2 transition-colors group-hover:text-electric-200">
+        <h3 className="font-display text-[17px] font-semibold leading-snug text-espresso-950 line-clamp-2 transition-colors group-hover:text-coffee">
           {post.title}
         </h3>
-        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-cloud-400">{post.excerpt}</p>
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-espresso-600">{post.excerpt}</p>
 
-        <div className="mt-4 flex items-center gap-3 text-xs text-cloud-500">
+        <div className="mt-4 flex items-center gap-3 text-xs text-espresso-400">
           <span className="inline-flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5" />
             {formatDate(post.publishedAt)}
           </span>
-          <span className="h-1 w-1 rounded-full bg-white/20" />
+          <span className="h-1 w-1 rounded-full bg-espresso-950/10" />
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
             {post.readingTime}
           </span>
         </div>
 
-        <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-4">
-          <span className="text-xs font-medium text-cloud-400">{post.author}</span>
-          <span className="text-xs font-semibold tracking-widest text-electric transition-colors group-hover:text-electric-300">
+        <div className="mt-4 flex items-center justify-between border-t border-espresso-950/06 pt-4">
+          <span className="text-xs font-medium text-espresso-400">{post.author}</span>
+          <span className="text-xs font-semibold tracking-widest text-coffee transition-colors group-hover:text-espresso-950">
             READ →
           </span>
         </div>

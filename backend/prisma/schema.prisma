@@ -101,15 +101,28 @@ model Service {
   id             String           @id @default(cuid())
   slug           String           @unique
   title          String
-  shortDesc      String?
-  description    String?
+  shortDesc      String? // Subtitle / Tagline (e.g. Visibility. Traffic. Leads. Revenue.)
+  description    String? // Full narrative
   icon           String? // lucide icon name
   imageUrl       String?
-  sortOrder      Int              @default(0)
+  backgroundImage String? // card background image URL (1600x1200, 4:3, WebP/AVIF)
+  backgroundImageAlt String?
+  imageWidth     Int? // px, for responsive srcset & validation
+  imageHeight    Int? // px, for responsive srcset & validation
+  bannerImage    String? // service section banner image (1200x400, 16:9, WebP/AVIF)
+  bannerImageAlt String?
+  bannerImageWidth Int?
+  bannerImageHeight Int?
+  sortOrder      Int              @default(0) // drives "01", "02" numbering globally
   isPublished    Boolean          @default(true)
   seoTitle       String?
   seoDescription String?
-  features       ServiceFeature[]
+  // Rich content as JSON arrays (kept on parent for simple admin UX)
+  benefits       String? // JSON string[] — Why It Matters
+  deliverables   String? // JSON string[] — Deliverables
+  extra          String? // JSON string[] — tag pills under What's Included
+  features       ServiceFeature[] // What's Included groups
+  processes      ServiceProcess[] // Our Process steps
   faqs           ServiceFaq[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
@@ -122,6 +135,15 @@ model ServiceFeature {
   groupTitle String
   items      String // JSON array string
   sortOrder  Int     @default(0)
+}
+
+model ServiceProcess {
+  id        String  @id @default(cuid())
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  step      String
+  detail    String
+  sortOrder Int     @default(0)
 }
 
 model ServiceFaq {
@@ -146,6 +168,36 @@ model Project {
   isPublished Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ── Case Studies (Home section — 4 cards with dynamic images) ───
+model CaseStudy {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  client           String
+  industry         String
+  category         String?   // e.g., "E‑commerce"
+  shortDescription String?   // brief tagline
+  services         String   // JSON string array
+  challenge        String
+  solution         String
+  result           String
+  accent           String   // gradient class hint
+  imageUrl         String?
+  imageAlt         String?
+  imageWidth       Int?
+  imageHeight      Int?
+  metrics          String?   // JSON string: key/value metrics for detail page
+  gallery          String?   // JSON string: array of image URLs and metadata
+  projectDate      DateTime?
+  projectUrl       String?
+  status           String?   // DRAFT / PUBLISHED
+  featured         Boolean?  // true to highlight
+  sortOrder        Int      @default(0)
+  isPublished      Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model Testimonial {
@@ -347,6 +399,19 @@ model ApiKey {
   createdAt DateTime @default(now())
 }
 
+// ── Token Blacklist (revocation) ───────────────────────────────
+model TokenBlacklist {
+  id        String   @id @default(cuid())
+  jti       String   @unique // JWT id (jti) claim
+  userId    String
+  reason    String   // logout, password_change, admin_reset
+  expiresAt DateTime // blacklist until token naturally expires
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
 // ── Password Reset OTP ───────────────────────────────────────
 model PasswordResetOtp {
   id        String   @id @default(cuid())
@@ -359,4 +424,379 @@ model PasswordResetOtp {
 
   @@index([email])
   @@index([expiresAt])
+}
+
+// ── Technology & Tools ────────────────────────────────────────
+model TechnologyCategory {
+  id          String            @id @default(cuid())
+  name        String            @unique
+  slug        String            @unique
+  description String?
+  icon        String?           // Lucide icon name
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+  items       TechnologyItem[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model TechnologyItem {
+  id              String              @id @default(cuid())
+  categoryId      String
+  category        TechnologyCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name            String
+  slug            String
+  description     String?
+  logoUrl         String?             // URL to logo/icon image
+  logoAlt         String?
+  websiteUrl      String?             // Official website link
+  sortOrder       Int                 @default(0)
+  isActive        Boolean             @default(true)
+  isFeatured      Boolean             @default(false) // Highlight in featured section
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@unique([categoryId, slug])
+}
+
+// ── Website Appearance Settings ──────────────────────────────
+model BrandingSettings {
+  id               String @id @default("branding")
+  logoUrl          String?
+  mobileLogoUrl    String?
+  darkLogoUrl      String?
+  faviconUrl       String?
+  logoWidth        String?   // JSON: {desktop:number, tablet:number, mobile:number}
+  logoHeight       String?
+}
+
+model HeaderSettings {
+  id               String @id @default("header")
+  backgroundColor  String?
+  backgroundOpacity Float? @default(1)
+  blur             Float? @default(0)
+  borderColor      String?
+  borderWidth      Float?
+  shadow           String?
+  height           String?
+  navFontSize      String?
+  navFontWeight    String?
+  navSpacing       String?
+  navHoverColor    String?
+  navActiveColor   String?
+  navUnderline     Boolean?
+  navUnderlineThickness Float?
+  navUnderlineSpeed    Float?
+  buttonText       String?
+  buttonBgColor    String?
+  buttonHoverBg    String?
+}
+
+model ButtonSettings {
+  id               String @id @default("button")
+  variant          String   // primary, secondary, outline, ghost, headerCta
+  bgColor          String?
+  textColor        String?
+  borderColor      String?
+  borderWidth      Float?
+  borderRadius     Float?
+  padding          String?
+  fontSize         String?
+  fontWeight       String?
+  hoverBgColor     String?
+  hoverTextColor   String?
+  hoverBorderColor String?
+  hoverScale       Float?
+  hoverShadow      String?
+  transitionDuration Float?
+}
+
+model TextHoverSettings {
+  id               String @id @default("textHover")
+  effectType       String   // none, color, underline, opacity, scale, glow, shadow, letterSpacing
+  color            String?
+  opacity          Float?
+  underline        Boolean?
+  underlineThickness Float?
+  underlineOffset  Float?
+  letterSpacing    Float?
+  transform        String?
+  scale            Float?
+  glow             String?
+  shadow           String?
+  transitionDuration Float?
+  easing           String?
+}
+
+model LinkHoverSettings {
+  id               String @id @default("linkHover")
+  effectType       String
+  color            String?
+  hoverColor       String?
+  underline        Boolean?
+  underlineThickness Float?
+  transitionDuration Float?
+  easing           String?
+}
+
+model CardHoverSettings {
+  id               String @id @default("cardHover")
+  effectType       String
+  scale            Float?
+  translateY       Float?
+  shadow           String?
+  borderColor      String?
+  backgroundChange String?
+  glow             String?
+  imageZoom        Float?
+  overlayOpacity   Float?
+  borderRadius     Float?
+  transitionDuration Float?
+  easing           String?
+}
+
+model FooterAppearanceSettings {
+  id               String @id @default("footerAppearance")
+  logoUrl          String?
+  description      String?
+  backgroundColor  String?
+  textColor        String?
+  headingColor     String?
+  linkColor        String?
+  linkHoverColor   String?
+  borderColor      String?
+  borderWidth      Float?
+  spacing          String?
+  padding          String?
+  columnSpacing    String?
+  copyrightText    String?
+  ctaText          String?
+  ctaLink          String?
+}
+
+model FooterHoverSettings {
+  id               String @id @default("footerHover")
+  effectType       String
+  hoverColor       String?
+  underline        Boolean?
+  underlineThickness Float?
+  transitionDuration Float?
+  easing           String?
+}
+
+model BottomSectionHoverSettings {
+  id                 String @id @default("bottomSectionHover")
+
+  // Hero CTA Buttons (woven-light-hero.tsx)
+  heroCtaPrimaryBg           String?
+  heroCtaPrimaryHoverBg      String?
+  heroCtaPrimaryText         String?
+  heroCtaPrimaryHoverText    String?
+  heroCtaPrimaryBorder       String?
+  heroCtaPrimaryHoverBorder  String?
+  heroCtaPrimaryShadow       String?
+  heroCtaPrimaryHoverShadow  String?
+  heroCtaPrimaryScale        Float?
+  heroCtaPrimaryTransition   Float?
+
+  heroCtaSecondaryBg         String?
+  heroCtaSecondaryHoverBg    String?
+  heroCtaSecondaryText       String?
+  heroCtaSecondaryHoverText  String?
+  heroCtaSecondaryBorder     String?
+  heroCtaSecondaryHoverBorder String?
+  heroCtaSecondaryShadow     String?
+  heroCtaSecondaryHoverShadow String?
+  heroCtaSecondaryScale      Float?
+  heroCtaSecondaryTransition Float?
+
+  // CTA Section Buttons (CTASection.tsx)
+  ctaSectionPrimaryBg        String?
+  ctaSectionPrimaryHoverBg   String?
+  ctaSectionPrimaryText      String?
+  ctaSectionPrimaryHoverText String?
+  ctaSectionPrimaryShadow    String?
+  ctaSectionPrimaryHoverShadow String?
+  ctaSectionPrimaryScale     Float?
+  ctaSectionPrimaryTransition Float?
+  ctaSectionPrimaryArrowTranslateX Float?
+
+  ctaSectionSecondaryBg      String?
+  ctaSectionSecondaryHoverBg String?
+  ctaSectionSecondaryText    String?
+  ctaSectionSecondaryHoverText String?
+  ctaSectionSecondaryBorder  String?
+  ctaSectionSecondaryHoverBorder String?
+  ctaSectionSecondaryShadow  String?
+  ctaSectionSecondaryHoverShadow String?
+  ctaSectionSecondaryScale   Float?
+  ctaSectionSecondaryTransition Float?
+
+  // Service Cards (ServicesSection.tsx)
+  serviceCardBg              String?
+  serviceCardHoverBg         String?
+  serviceCardBorderColor     String?
+  serviceCardHoverBorderColor String?
+  serviceCardShadow          String?
+  serviceCardHoverShadow     String?
+  serviceCardTranslateY      Float?
+  serviceCardScale           Float?
+  serviceCardImageZoom       Float?
+  serviceCardImageTransition Float?
+  serviceCardBorderWidth     Float?
+  serviceCardHoverBorderWidth Float?
+  serviceCardBottomBarHeight Float?
+  serviceCardBottomBarColor  String?
+  serviceCardBottomBarTransition Float?
+  serviceCardIconBg          String?
+  serviceCardIconHoverBg     String?
+  serviceCardIconText        String?
+  serviceCardIconHoverText   String?
+  serviceCardIconScale       Float?
+  serviceCardIconTransition  Float?
+  serviceCardExploreTextColor String?
+  serviceCardExploreHoverTextColor String?
+  serviceCardArrowColor      String?
+  serviceCardArrowHoverColor String?
+  serviceCardArrowTranslateX Float?
+  serviceCardArrowTranslateY Float?
+  serviceCardArrowTransition Float?
+
+  // Footer Branding (Footer.tsx)
+  footerLogoHoverOpacity     Float?
+  footerLogoHoverScale       Float?
+  footerLogoTransition       Float?
+  footerEmailColor           String?
+  footerEmailHoverColor      String?
+  footerEmailUnderline       Boolean?
+  footerEmailUnderlineThickness Float?
+  footerEmailTransition      Float?
+
+  // Footer Navigation Links
+  footerNavLinkColor         String?
+  footerNavLinkHoverColor    String?
+  footerNavLinkUnderline     Boolean?
+  footerNavLinkUnderlineThickness Float?
+  footerNavLinkUnderlineOffset Float?
+  footerNavLinkTransition    Float?
+  footerNavLinkEasing        String?
+
+  // Footer Services Links
+  footerServiceLinkColor     String?
+  footerServiceLinkHoverColor String?
+  footerServiceLinkUnderline Boolean?
+  footerServiceLinkUnderlineThickness Float?
+  footerServiceLinkUnderlineOffset Float?
+  footerServiceLinkTransition Float?
+  footerServiceLinkEasing    String?
+
+  // Footer Social Icons
+  footerSocialIconSize       Float?
+  footerSocialIconColor      String?
+  footerSocialIconHoverColor String?
+  footerSocialIconBg         String?
+  footerSocialIconHoverBg    String?
+  footerSocialIconBorderRadius Float?
+  footerSocialIconScale      Float?
+  footerSocialIconRotation   Float?
+  footerSocialIconShadow     String?
+  footerSocialIconHoverShadow String?
+  footerSocialIconTransition Float?
+
+  // Footer CTA Button
+  footerCtaBg                String?
+  footerCtaHoverBg           String?
+  footerCtaText              String?
+  footerCtaHoverText         String?
+  footerCtaShadow            String?
+  footerCtaHoverShadow       String?
+  footerCtaScale             Float?
+  footerCtaArrowTranslateX   Float?
+  footerCtaArrowTranslateY   Float?
+  footerCtaTransition        Float?
+
+  // Copyright Bar Links
+  copyrightLinkColor         String?
+  copyrightLinkHoverColor    String?
+  copyrightLinkUnderline     Boolean?
+  copyrightLinkUnderlineThickness Float?
+  copyrightLinkUnderlineOffset Float?
+  copyrightLinkTransition    Float?
+  copyrightLinkEasing        String?
+
+  // Bottom Decorative Text (Watermark)
+  watermarkColor             String?
+  watermarkHoverColor        String?
+  watermarkScale             Float?
+  watermarkTransition        Float?
+  watermarkOpacity           Float?
+}
+
+model SocialSettings {
+  id               String @id @default("social")
+  platform         String
+  url              String
+  isEnabled        Boolean @default(true)
+  order            Int @default(0)
+  iconSize         Float?
+  color            String?
+  hoverColor       String?
+  background       String?
+  hoverBackground  String?
+  borderRadius     Float?
+  hoverScale       Float?
+  hoverRotation    Float?
+  hoverShadow      String?
+}
+
+model ColorSettings {
+  id                   String @id @default("colors")
+  primary              String?
+  secondary            String?
+  accent               String?
+  background           String?
+  surface              String?
+  heading              String?
+  body                 String?
+  muted                String?
+  border               String?
+  button               String?
+  buttonHover          String?
+  buttonText           String?
+  buttonHoverText      String?
+  link                 String?
+  linkHover            String?
+  footerBackground     String?
+  footerText           String?
+  footerHeading        String?
+  footerLink           String?
+  footerLinkHover      String?
+  headerBackground     String?
+  headerText           String?
+  headerLinkHover      String?
+  bottomSectionBackground String?
+}
+
+model TypographySettings {
+  id               String @id @default("typography")
+  primaryFont      String?
+  headingFont      String?
+  bodyFont         String?
+  headingWeight    String?
+  bodyWeight       String?
+  baseSize         Float?
+  h1Size           Float?
+  h2Size           Float?
+  h3Size           Float?
+  paragraphSize    Float?
+  lineHeight       Float?
+  letterSpacing    Float?
+}
+
+model AnimationSettings {
+  id               String @id @default("animation")
+  enableHover      Boolean @default(true)
+  hoverSpeed       Float?
+  intensity        Float?
+  reducedMotion    Boolean @default(false)
 }

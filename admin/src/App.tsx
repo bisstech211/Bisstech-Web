@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './lib/auth';
 import { Layout } from './components/Layout';
@@ -7,6 +8,7 @@ import { Dashboard } from './pages/Dashboard';
 
 import Blogs from './pages/Blogs';
 import Services from './pages/Services';
+import CaseStudies from './pages/CaseStudies';
 import Leads from './pages/Leads';
 import Newsletter from './pages/Newsletter';
 import Media from './pages/Media';
@@ -19,7 +21,14 @@ import Audit from './pages/Audit';
 import Settings from './pages/Settings';
 
 function Protected({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, validateAuth } = useAuth();
+  const [validated, setValidated] = React.useState(false);
+
+  useEffect(() => {
+    validateAuth().then(() => setValidated(true));
+  }, [validateAuth]);
+
+  if (!validated) return <div className="flex min-h-screen items-center justify-center"><div className="shimmer h-1 w-32 rounded-full" /></div>;
   if (!user || !localStorage.getItem('accessToken')) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
@@ -39,6 +48,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="blogs" element={<Blogs />} />
         <Route path="services" element={<Services />} />
+        <Route path="case-studies" element={<CaseStudies />} />
         <Route path="leads" element={<Leads />} />
         <Route path="newsletter" element={<Newsletter />} />
         <Route path="media" element={<Media />} />

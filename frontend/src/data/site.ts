@@ -24,8 +24,10 @@ export const SOCIALS = [
 export const FOOTER_SERVICES = [
   'Digital Marketing',
   'Website Development',
-  'E-commerce & Quick Commerce',
+  'App Development',
+  'Software Development',
   'AI Automation',
+  'E-commerce & Quick Commerce Management',
   'Graphic Design',
 ];
 

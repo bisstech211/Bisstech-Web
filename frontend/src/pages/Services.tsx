@@ -1,140 +1,88 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Check } from 'lucide-react';
-import { TrendingUp, Code2, ShoppingBag, BrainCircuit, PenTool } from 'lucide-react';
 import { SEO } from '../lib/seo';
-import { SERVICES, type Service } from '../data/services';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Reveal } from '../components/ui/Reveal';
 import { Button } from '../components/ui/Button';
 import { CTASection } from '../components/home/CTASection';
 import { EASE } from '../lib/motion';
 import { cn } from '../lib/utils';
-import { API_BASE } from '../lib/api';
-
-const ICON_MAP: Record<string, Service['icon']> = {
-  TrendingUp, Code2, ShoppingBag, BrainCircuit, PenTool,
-  trendingup: TrendingUp, code2: Code2, shoppingbag: ShoppingBag, braincircuit: BrainCircuit, pentool: PenTool,
-};
-
-type ApiService = {
-  id: string; slug: string; title: string; shortDesc?: string | null; description?: string | null;
-  icon?: string | null; sortOrder?: number;
-  features?: Array<{ groupTitle: string; items: string; sortOrder?: number }>;
-  faqs?: Array<{ question: string; answer: string }>;
-};
-
-function mapApiService(s: ApiService, idx: number): Service {
-  const fallback = SERVICES[idx] ?? SERVICES[0];
-  let groups: Service['groups'] = fallback.groups;
-  if (s.features?.length) {
-    groups = s.features.map((f) => {
-      let items: string[] = [];
-      try { const parsed = JSON.parse(f.items); items = Array.isArray(parsed) ? parsed : [String(f.items)]; } catch { items = f.items ? [f.items] : []; }
-      return { title: f.groupTitle, items };
-    });
-  }
-  const iconKey = (s.icon || '').trim();
-  const icon = ICON_MAP[iconKey] ?? ICON_MAP[iconKey.toLowerCase()] ?? fallback.icon;
-  return {
-    id: s.slug || s.id,
-    number: String(idx + 1).padStart(2, '0'),
-    title: s.title,
-    short: s.shortDesc || fallback.short,
-    description: s.description || fallback.description,
-    icon,
-    groups,
-    benefits: fallback.benefits,
-    deliverables: fallback.deliverables,
-    process: fallback.process,
-  };
-}
+import { useServices } from '../hooks/useServices';
+import type { Service } from '../data/services';
+import { useState } from 'react';
 
 /**
  * Services page — detailed, interactive service cards.
+ * Single source of truth: useServices() GET /api/v1/services/public.
+ * Any service added/updated in Admin instantly reflects here AND on Home.
  * Supports hash deep-links (e.g. /services#ai-automation) and URL state.
  */
 export default function Services() {
-  const [remoteServices, setRemoteServices] = useState<Service[] | null>(null);
-
-  // Fetch published services from backend — silent fallback to static SERVICES.
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${API_BASE}/services/public`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((json: { data: ApiService[] }) => {
-        if (cancelled) return;
-        const data = json.data || [];
-        if (data.length) setRemoteServices(data.map((s, i) => mapApiService(s, i)));
-      })
-      .catch(() => { /* backend offline or empty — keep static */ });
-    return () => { cancelled = true; };
-  }, []);
-
-  const list = useMemo(() => remoteServices ?? SERVICES, [remoteServices]);
+  const { services: list } = useServices();
 
   const [open, setOpen] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace('#', '');
-      if (hash && SERVICES.some((s) => s.id === hash)) return hash;
+      if (hash && list.some((s) => s.id === hash)) return hash;
     }
-    return SERVICES[0].id;
+    return list[0]?.id ?? '';
   });
 
-  // Keep open in sync when remote list loads (e.g. hash points to a remote slug)
+  // If list loads/changes and current open isn't valid, keep it but don't force
   useEffect(() => {
-    if (!remoteServices) return;
-    if (remoteServices.length && !remoteServices.some((s) => s.id === open)) {
-      // If current open isn't in remote list, keep it but don't force — user can still navigate
+    if (list.length && !list.some((s) => s.id === open)) {
+      // don't auto-switch — user may still navigate via anchors
     }
-  }, [remoteServices, open]);
+  }, [list, open]);
 
   const toggle = useCallback((id: string) => {
     setOpen((cur) => (cur === id ? '' : id));
   }, []);
 
-  // Keep URL hash in sync
   useEffect(() => {
     if (open) history.replaceState(null, '', `#${open}`);
   }, [open]);
 
-  // On load, if a hash is present, scroll the card into view smoothly.
+  // Initial hash scroll
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
-    if (!hash) return;
-    const el = document.getElementById(hash);
-    if (el) {
-      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
-    }
-  }, []);
-  // Re-run hash scroll when remote list mounts (ids may have just appeared)
-  useEffect(() => {
-    if (!remoteServices) return;
     const hash = window.location.hash.replace('#', '');
     if (!hash) return;
     const el = document.getElementById(hash);
     if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
-  }, [remoteServices]);
+  }, []);
+  // Re-run when list loads (ids may have just appeared from API)
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+  }, [list]);
+
+  // Ensure open has a value once list is known
+  useEffect(() => {
+    if (!open && list.length) setOpen(list[0].id);
+  }, [list, open]);
 
   return (
     <>
       <SEO
-        title="Services — Digital Marketing, Web, E-commerce, AI & Design"
-        description="Explore BISSTECH's services: digital marketing, website development, e-commerce & quick commerce management, AI automation and graphic design."
+        title="Services — Digital Marketing, Web, App, Software, AI, E-commerce & Design"
+        description="Explore BISSTECH's 7 services: digital marketing, website development, app development, software development, AI automation, e-commerce & quick commerce management, and graphic design."
         path="/services"
       />
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden pt-40 pb-20" aria-label="Services overview">
-          <div aria-hidden className="absolute inset-0 bg-grid mask-fade-y opacity-50" />
-          <div aria-hidden className="absolute right-0 top-0 h-[360px] w-[360px] rounded-full bg-electric/[0.12] blur-[120px]" />
+        <section className="relative overflow-hidden pt-40 pb-20 bg-cream-50" aria-label="Services overview">
+          <div aria-hidden className="absolute inset-0 bg-grid-cream mask-fade-y opacity-60" />
+          <div aria-hidden className="absolute right-0 top-0 h-[360px] w-[360px] rounded-full bg-coffee/10 blur-[120px]" />
           <div className="container-bt relative">
             <SectionHeading
               align="center"
               eyebrow="Our services"
               title={
                 <>
-                  Five capabilities. <span className="text-gradient">One growth engine.</span>
+                  Seven capabilities. <span className="text-gradient">One growth engine.</span>
                 </>
               }
               description="Open each service to explore everything we deliver — and what it does for your business."
@@ -143,7 +91,7 @@ export default function Services() {
         </section>
 
         {/* Sticky anchor nav */}
-        <div className="sticky top-[72px] z-30 border-y border-white/[0.06] bg-ink-950/80 backdrop-blur-xl">
+        <div className="sticky top-[72px] z-30 border-y border-espresso-950/08 bg-cream-50/90 backdrop-blur-xl">
           <nav aria-label="Jump to service" className="container-bt flex gap-2 overflow-x-auto py-3 no-scrollbar">
             {list.map((s) => (
               <a
@@ -157,8 +105,8 @@ export default function Services() {
                 className={cn(
                   'whitespace-nowrap rounded-full border px-4 py-1.5 font-display text-xs font-medium transition-colors',
                   open === s.id
-                    ? 'border-electric/40 bg-electric/10 text-electric-200'
-                    : 'border-white/10 text-cloud-400 hover:text-white',
+                    ? 'border-coffee/40 bg-coffee/10 text-coffee'
+                    : 'border-espresso-950/10 text-espresso-500 hover:text-espresso-950',
                 )}
               >
                 {s.number} · {s.title}
@@ -175,9 +123,9 @@ export default function Services() {
 
           <div className="mt-12 text-center">
             <Reveal>
-              <h3 className="font-display text-2xl font-semibold text-white">Not sure which service fits?</h3>
-              <p className="mx-auto mt-3 max-w-md text-sm text-cloud-400">
-                Tell us what you’re trying to achieve — we’ll recommend the right mix.
+              <h3 className="font-display text-2xl font-semibold text-espresso-950">Not sure which service fits?</h3>
+              <p className="mx-auto mt-3 max-w-md text-sm text-espresso-600">
+                Tell us what you're trying to achieve — we'll recommend the right mix.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Button to="/contact" size="lg" withArrow>
@@ -211,7 +159,7 @@ function ServiceCard({
       <div
         className={cn(
           'overflow-hidden rounded-2xl border transition-all duration-500',
-          isOpen ? 'border-electric/30 bg-white/[0.03] shadow-glow' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/15',
+          isOpen ? 'border-coffee/30 bg-white shadow-card-light-hover' : 'border-espresso-950/06 bg-white hover:border-coffee/20 hover:shadow-card-light',
         )}
       >
         {/* Card header */}
@@ -223,23 +171,23 @@ function ServiceCard({
           className="group flex w-full items-center justify-between gap-6 p-6 text-left sm:p-8"
         >
           <div className="flex items-center gap-5 sm:gap-7">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-electric">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-espresso-950/10 bg-white text-coffee">
               <service.icon className="h-5 w-5" />
             </span>
             <div>
               <div className="flex items-center gap-3">
-                <span className="font-display text-xs font-bold tracking-[0.2em] text-cloud-600">
+                <span className="font-display text-xs font-bold tracking-[0.2em] text-espresso-400">
                   {service.number}
                 </span>
-                <h2 className="font-display text-xl font-semibold text-white sm:text-2xl">{service.title}</h2>
+                <h2 className="font-display text-xl font-semibold text-espresso-950 sm:text-2xl">{service.title}</h2>
               </div>
-              <p className="mt-1 text-sm text-cloud-400">{service.short}</p>
+              <p className="mt-1 text-sm text-espresso-600">{service.short}</p>
             </div>
           </div>
           <span
             className={cn(
-              'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 text-cloud-400 transition-all duration-300',
-              isOpen ? 'rotate-180 border-electric bg-electric text-white' : 'group-hover:border-white/30',
+              'grid h-10 w-10 shrink-0 place-items-center rounded-full border border-espresso-950/10 text-espresso-400 transition-all duration-300',
+              isOpen ? 'rotate-180 border-coffee bg-coffee text-cream-50' : 'group-hover:border-coffee/30',
             )}
           >
             <ChevronDown className="h-4 w-4" />
@@ -258,20 +206,32 @@ function ServiceCard({
               transition={{ duration: 0.5, ease: EASE }}
               className="overflow-hidden"
             >
-              <div className="grid gap-10 border-t border-white/[0.06] p-6 sm:p-8 lg:grid-cols-[minmax(0,6fr)_minmax(0,4fr)]">
+              {/* Background Image in expanded panel */}
+              {service.backgroundImage && (
+                <div className="relative h-64 sm:h-80 overflow-hidden rounded-t-2xl">
+                  <img
+                    src={service.backgroundImage}
+                    alt={service.backgroundImageAlt || service.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-espresso-950/80 via-espresso-950/40 to-transparent" />
+                </div>
+              )}
+              <div className="grid gap-10 border-t border-espresso-950/06 p-6 sm:p-8 lg:grid-cols-[minmax(0,6fr)_minmax(0,4fr)]">
                 {/* Sub-services */}
                 <div>
-                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-electric">
-                    What’s included
+                  <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-coffee">
+                    What's included
                   </p>
                   <div className="mt-5 grid gap-6 sm:grid-cols-2">
                     {service.groups.map((g) => (
                       <div key={g.title}>
-                        <h3 className="font-display text-sm font-semibold text-white">{g.title}</h3>
+                        <h3 className="font-display text-sm font-semibold text-espresso-950">{g.title}</h3>
                         <ul className="mt-3 grid gap-2">
                           {g.items.map((item) => (
-                            <li key={item} className="flex items-start gap-2 text-sm text-cloud-300">
-                              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-electric/70" />
+                            <li key={item} className="flex items-start gap-2 text-sm text-espresso-700">
+                              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-coffee/70" />
                               {item}
                             </li>
                           ))}
@@ -284,7 +244,7 @@ function ServiceCard({
                       {service.extra.map((e) => (
                         <span
                           key={e}
-                          className="rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-[11px] text-cloud-400"
+                          className="rounded-full border border-espresso-950/10 bg-cream-100 px-3 py-1 text-[11px] text-espresso-600"
                         >
                           {e}
                         </span>
@@ -295,43 +255,43 @@ function ServiceCard({
 
                 {/* Sidebar: benefits, deliverables, process */}
                 <div className="space-y-6">
-                  <div className="rounded-xl border border-white/[0.07] bg-ink-950/60 p-5">
-                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+                  <div className="rounded-xl border border-espresso-950/06 bg-cream-50 p-5">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-400">
                       Why it matters
                     </p>
                     <ul className="mt-3 space-y-2">
                       {service.benefits.map((b) => (
-                        <li key={b} className="flex items-start gap-2 text-sm text-cloud-300">
-                          <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-electric" />
+                        <li key={b} className="flex items-start gap-2 text-sm text-espresso-700">
+                          <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-coffee" />
                           {b}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="rounded-xl border border-white/[0.07] bg-ink-950/60 p-5">
-                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+                  <div className="rounded-xl border border-espresso-950/06 bg-cream-50 p-5">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-400">
                       Deliverables
                     </p>
                     <ul className="mt-3 space-y-2">
                       {service.deliverables.map((d) => (
-                        <li key={d} className="flex items-start gap-2 text-sm text-cloud-300">
-                          <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-electric" />
+                        <li key={d} className="flex items-start gap-2 text-sm text-espresso-700">
+                          <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-coffee" />
                           {d}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="rounded-xl border border-white/[0.07] bg-ink-950/60 p-5">
-                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-cloud-500">
+                  <div className="rounded-xl border border-espresso-950/06 bg-cream-50 p-5">
+                    <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-espresso-400">
                       Our process
                     </p>
                     <ol className="mt-3 space-y-3">
                       {service.process.map((p) => (
                         <li key={p.step} className="flex gap-3">
-                          <span className="font-display text-xs font-bold text-electric">{p.step}</span>
-                          <span className="text-sm leading-snug text-cloud-300">{p.detail}</span>
+                          <span className="font-display text-xs font-bold text-coffee">{p.step}</span>
+                          <span className="text-sm leading-snug text-espresso-700">{p.detail}</span>
                         </li>
                       ))}
                     </ol>

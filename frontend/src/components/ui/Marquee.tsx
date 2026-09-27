@@ -15,10 +15,10 @@ export function Marquee({ items, className, reverse = false }: MarqueeProps) {
         {doubled.map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="flex items-center gap-6 whitespace-nowrap px-6 font-display text-sm font-medium uppercase tracking-[0.2em] text-cloud-500"
+            className="flex items-center gap-6 whitespace-nowrap px-6 font-display text-sm font-medium uppercase tracking-[0.2em] text-espresso-500"
           >
             {item}
-            <span className="text-electric/60">✦</span>
+            <span className="text-coffee/60">✦</span>
           </span>
         ))}
       </div>

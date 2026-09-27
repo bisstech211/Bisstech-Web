@@ -8,12 +8,12 @@ export function Badge({
 }: {
   children: ReactNode;
   className?: string;
-  tone?: 'default' | 'electric' | 'outline';
+  tone?: 'default' | 'coffee' | 'outline';
 }) {
   const tones = {
-    default: 'border-white/10 bg-white/[0.03] text-cloud-300',
-    electric: 'border-electric/30 bg-electric/10 text-electric-200',
-    outline: 'border-white/15 bg-transparent text-cloud-200',
+    default: 'border-espresso-950/10 bg-cream-100 text-espresso-700',
+    coffee: 'border-coffee/30 bg-coffee/10 text-coffee',
+    outline: 'border-espresso-950/15 bg-transparent text-espresso-700',
   };
   return (
     <span

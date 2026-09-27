@@ -1,6 +1,6 @@
 import { motion, useScroll, useSpring } from 'framer-motion';
 
-/** Thin electric progress bar fixed to the top of the viewport. */
+/** Thin coffee progress bar fixed to the top of the viewport. */
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
@@ -9,7 +9,7 @@ export function ScrollProgress() {
     <motion.div
       aria-hidden
       style={{ scaleX }}
-      className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-gradient-to-r from-electric via-electric-400 to-violetglow"
+      className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-gradient-to-r from-coffee via-coffee/80 to-espresso-700"
     />
   );
 }

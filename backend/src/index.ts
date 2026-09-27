@@ -16,11 +16,14 @@ import mediaRoutes from './modules/media/media.routes';
 import userRoutes from './modules/users/users.routes';
 import auditRoutes from './modules/audit/audit.routes';
 import contentRoutes from './modules/content/content.routes';
+import caseStudyRoutes from './modules/caseStudies/caseStudies.routes';
+import technologyRoutes from './modules/technologies/technologies.routes';
 import { errorHandler, notFound } from './middleware/error';
 import { requireAuth as requireAuthForStats } from './middleware/auth';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '4000', 10);
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Trust proxy if behind reverse proxy
 app.set('trust proxy', 1);
@@ -28,17 +31,36 @@ app.set('trust proxy', 1);
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:5174')
   .split(',').map((s) => s.trim()).filter(Boolean);
 
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+// Helmet with CSP for production
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: isProduction ? {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+      fontSrc: ["'self'", 'data:'],
+      connectSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+    },
+  } : false, // Disable CSP in development
+}));
+
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
     if (allowedOrigins.includes(origin)) return cb(null, true);
-    // Allow any localhost in dev
-    if (process.env.NODE_ENV !== 'production' && origin.includes('localhost')) return cb(null, true);
+    // Allow any localhost in dev only
+    if (!isProduction && origin.includes('localhost')) return cb(null, true);
     return cb(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
 }));
+
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -53,6 +75,9 @@ app.use(rateLimit({
 
 // Stricter for auth & lead submit
 const strictLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false });
+
+// Upload rate limiter - stricter limits for upload endpoints
+const uploadLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, standardHeaders: true, legacyHeaders: false });
 
 // Static uploads
 const uploadDir = process.env.UPLOAD_DIR || './uploads';
@@ -73,9 +98,11 @@ app.get('/', (_req, res) =>
   }),
 );
 
-// Health
-app.get('/api/health', (_req, res) => res.json({ success: true, data: { status: 'ok', timestamp: new Date().toISOString() } }));
+// Health - single canonical endpoint at /api/v1/health
 app.get('/api/v1/health', (_req, res) => res.json({ success: true, data: { status: 'ok', timestamp: new Date().toISOString() } }));
+
+// Legacy /api/health redirects to canonical endpoint
+app.get('/api/health', (_req, res) => res.redirect(301, '/api/v1/health'));
 
 // Public routes
 app.use('/api/v1/newsletter', newsletterRouter);
@@ -86,11 +113,13 @@ app.use('/api/v1/blog', blogRoutes);
 app.use('/api/v1/services', serviceRoutes);
 app.use('/api/v1/leads', leadsRoutes);
 app.use('/api/v1/settings', settingsRoutes);
-app.use('/api/v1/media', mediaRoutes);
+app.use('/api/v1/media', uploadLimiter, mediaRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/audit', auditRoutes);
 app.use('/api/v1/system', auditRoutes); // health lives there too
 app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/case-studies', caseStudyRoutes);
+app.use('/api/v1/technologies', technologyRoutes);
 
 // Dashboard stats — protected (admin)
 app.get('/api/v1/dashboard/stats', requireAuthForStats, async (_req, res) => {

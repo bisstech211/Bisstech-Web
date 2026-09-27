@@ -4,7 +4,7 @@ import { LazyMotion, domAnimation, m } from "framer-motion";
 /* ------------------------------------------------------------------ */
 /* Types                                                                */
 /* ------------------------------------------------------------------ */
-type CardTheme = 'red' | 'redSoft' | 'redDeep';
+type CardTheme = 'coffee' | 'coffeeSoft' | 'espresso';
 
 interface CardProps {
   number: string;
@@ -64,28 +64,28 @@ const Pin = ({ className }: { className?: string }) => (
 /* Card                                                                 */
 /* ------------------------------------------------------------------ */
 const DEFAULT_BG_COLORS: Record<CardTheme, string> = {
-  red: 'bg-electric-500/10',
-  redSoft: 'bg-electric-300/10',
-  redDeep: 'bg-electric-600/15',
+  coffee: 'bg-coffee/10',
+  coffeeSoft: 'bg-coffee/5',
+  espresso: 'bg-espresso-800/10',
 };
 
 const DEFAULT_TEXT_COLORS: Record<CardTheme, string> = {
-  red: 'text-electric-600 dark:text-electric-400',
-  redSoft: 'text-electric-500 dark:text-electric-300',
-  redDeep: 'text-electric-700 dark:text-electric-400',
+  coffee: 'text-coffee',
+  coffeeSoft: 'text-coffee',
+  espresso: 'text-espresso-700',
 };
 
 const DEFAULT_BORDER_COLORS: Record<CardTheme, string> = {
-  red: 'border-electric-500/15 dark:border-electric-500/25',
-  redSoft: 'border-electric-300/20 dark:border-electric-400/20',
-  redDeep: 'border-electric-700/20 dark:border-electric-500/25',
+  coffee: 'border-coffee/20',
+  coffeeSoft: 'border-coffee/10',
+  espresso: 'border-espresso-700/15',
 };
 
 const Card = ({
   number,
   title,
   description,
-  colorTheme = 'red',
+  colorTheme = 'coffee',
   className,
   rotate,
   colors: customColors,
@@ -98,7 +98,7 @@ const Card = ({
     <div
       className={`relative w-full md:w-[280px] transition-transform duration-300 hover:z-30 hover:scale-105 ${rotate ?? ''} ${className ?? ''}`}
     >
-      <div className="bg-white dark:bg-ink-800 p-2 rounded-[25px] shadow-[0px_10px_20px_0px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_-20px_rgba(229,9,20,0.2)] border border-neutral-100 dark:border-white/10">
+      <div className="bg-cream-50 p-2 rounded-[25px] shadow-[0px_10px_20px_0px_rgba(61,43,31,0.06)] border border-espresso-950/06">
         <Pin className={`w-8 h-8 mb-6 mx-auto ${textColor}`} />
         <div
           className={`${bgColor} border ${borderColor} rounded-[15px] p-[15px] h-full flex flex-col relative overflow-hidden`}
@@ -108,10 +108,10 @@ const Card = ({
           >
             {number}
           </span>
-          <h3 className="text-2xl font-semibold text-neutral-800 dark:text-white leading-none mb-[10px]">
+          <h3 className="text-2xl font-semibold text-espresso-950 leading-none mb-[10px]">
             {title}
           </h3>
-          <p className="text-neutral-500 dark:text-cloud-300 text-sm leading-5 tracking-tight">
+          <p className="text-espresso-600 text-sm leading-5 tracking-tight">
             {description}
           </p>
         </div>
@@ -142,31 +142,31 @@ const DEFAULT_FEATURES: Step[] = [
     title: 'Discover',
     description:
       'We dig into your business, audience, competitors, and goals. No assumptions — just a clear picture of where growth lives.',
-    colorTheme: 'red',
+    colorTheme: 'coffee',
   },
   {
     title: 'Strategize',
     description:
       'We map out the architectural blueprint, user journeys, and technical roadmap to ensure maximum speed and stability.',
-    colorTheme: 'redSoft',
+    colorTheme: 'coffeeSoft',
   },
   {
     title: 'Build & Create',
     description:
       'Our engineering and design team executes with precision, crafting high-performance digital experiences.',
-    colorTheme: 'redDeep',
+    colorTheme: 'espresso',
   },
   {
     title: 'Launch',
     description:
       'Rigorous testing, optimization, and seamless deployment to get your product live with zero downtime.',
-    colorTheme: 'redSoft',
+    colorTheme: 'coffeeSoft',
   },
   {
     title: 'Scale & Grow',
     description:
       'Continuous tracking, iteration, and automation to maintain momentum and scale your brand.',
-    colorTheme: 'red',
+    colorTheme: 'coffee',
   },
 ];
 
@@ -187,39 +187,31 @@ export function ProcessSection({
   return (
     <LazyMotion features={domAnimation}>
       <section
-        className={`bg-white dark:bg-black max-md:pt-10 max-md:pb-20 md:py-20 px-8 relative overflow-hidden ${className ?? ''}`}
+        className={`bg-cream-50 max-md:pt-10 max-md:pb-20 md:py-20 px-8 relative overflow-hidden ${className ?? ''}`}
       >
         <div className="text-center max-w-3xl mx-auto mb-16 relative z-20">
-          <p className="text-electric font-medium tracking-widest text-sm uppercase mb-2">
+          <p className="text-coffee font-medium tracking-widest text-sm uppercase mb-2">
             HOW WE WORK
           </p>
-          <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
-            A process built for <span className="text-electric">momentum.</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-espresso-950 mb-4">
+            A process built for <span className="text-gradient">momentum.</span>
           </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 text-lg">
+          <p className="text-espresso-600 text-lg">
             Clear, fast and collaborative — you always know what's happening and what's next.
           </p>
         </div>
 
-        {/* Horizontal scanline backdrop (dark theme uses the ink variant) */}
+        {/* Horizontal scanline backdrop (light theme) */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.08] dark:opacity-[0.15]"
+          className="absolute inset-0 pointer-events-none opacity-[0.04]"
           style={{
-            backgroundImage: 'linear-gradient(#000 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(rgba(61,43,31,0.08) 1px, transparent 1px)',
             backgroundSize: '100% 32px',
             marginTop: '4px',
           }}
         ></div>
-        <div
-          className="absolute inset-0 pointer-events-none opacity-0 dark:opacity-[0.1]"
-          style={{
-            backgroundImage: 'linear-gradient(#fff 1px, transparent 1px)',
-            backgroundSize: '100% 32px',
-            marginTop: '4px',
-          }}
-        ></div>
-        <div className="from-white dark:from-ink pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r to-transparent" />
-        <div className="from-white dark:from-ink pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l to-transparent" />
+        <div className="from-cream-100 pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r to-transparent" />
+        <div className="from-cream-100 pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l to-transparent" />
 
         <div className="max-w-6xl mx-auto relative z-10">
           <div
@@ -245,7 +237,7 @@ export function ProcessSection({
                     <m.path
                       d={pathD}
                       stroke="currentColor"
-                      className="text-neutral-300 dark:text-electric-500/40"
+                      className="text-espresso-950/10"
                       strokeWidth="2"
                       strokeDasharray="8 6"
                       fill="none"

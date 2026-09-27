@@ -8,7 +8,7 @@ import { BlogCard } from '../components/blog/BlogCard';
 import { EmptyState } from '../components/blog/BlogGrid';
 import { BlogCTA } from '../components/blog/BlogCTA';
 import { Reveal } from '../components/ui/Reveal';
-import { API_BASE } from '../lib/api';
+import { fetchBlogPosts, fetchBlogCategories } from '../lib/api';
 
 type ApiPost = {
   id: string;
@@ -53,17 +53,12 @@ export default function Blog() {
   useEffect(() => {
     let cancelled = false;
     const q = search.trim();
-    const params = new URLSearchParams();
-    params.set('limit', '100');
-    if (q) params.set('search', q);
-    if (category !== 'All') params.set('category', category);
 
-    fetch(`${API_BASE}/blog/public?${params.toString()}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((json: { data: ApiPost[] }) => {
+    fetchBlogPosts({ page: 1, limit: 100, search: q || undefined, category: category !== 'All' ? category : undefined })
+      .then((json) => {
         if (cancelled) return;
-        const mapped = (json.data || []).map(mapApiPost);
-        setRemotePosts(mapped);
+        const mapped = (json.data as unknown as ApiPost[]) || [];
+        setRemotePosts(mapped.map(mapApiPost));
       })
       .catch(() => {
         if (!cancelled) setRemotePosts(null);
@@ -71,12 +66,11 @@ export default function Blog() {
 
     // Categories (once)
     if (!remoteCategories) {
-      fetch(`${API_BASE}/blog/public-categories`)
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
-        .then((json: { data: Array<{ name: string }> }) => {
+      fetchBlogCategories()
+        .then((json) => {
           if (cancelled) return;
-          const names = (json.data || []).map((c) => c.name);
-          if (names.length) setRemoteCategories(['All', ...names]);
+          const names = (json.data as Array<{ name: string }>) || [];
+          if (names.length) setRemoteCategories(['All', ...names.map(c => c.name)]);
         })
         .catch(() => {});
     }
@@ -138,8 +132,8 @@ export default function Blog() {
           ) : (
             <>
               {!showFeatured && filtered.length > 0 && search.trim() === '' && category === 'All' && (
-                <p className="mb-6 text-sm text-cloud-500">
-                  Showing <span className="font-semibold text-white">{filtered.length}</span> articles
+                <p className="mb-6 text-sm text-espresso-500">
+                  Showing <span className="font-semibold text-espresso-950">{filtered.length}</span> articles
                 </p>
               )}
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

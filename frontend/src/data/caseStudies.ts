@@ -28,7 +28,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'We launched a conversion-focused storefront, structured catalog, and a full-funnel Meta ads system with creative testing and retargeting.',
     result:
       'The brand gained a scalable sales engine — a measurable lift in store sessions, qualified orders and a repeatable acquisition playbook.',
-    accent: 'from-electric/60 to-violetglow/40',
+    accent: 'from-coffee/60 to-espresso-700/40',
   },
   {
     slug: 'saas-lead-automation',
@@ -41,7 +41,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'We rebuilt a high-performance, SEO-friendly site, added a self-qualifying AI lead bot and automated instant follow-up workflows.',
     result:
       'Faster response times, a steady stream of qualified pipeline, and a marketing site that now converts visitors into demos.',
-    accent: 'from-electric/50 to-electric/20',
+    accent: 'from-coffee/50 to-espresso-700/20',
   },
   {
     slug: 'quick-commerce-ops',
@@ -54,7 +54,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'We set up and managed catalog, pricing and promotional calendars across Blinkit, Zepto and Instamart, with on-brand creative assets.',
     result:
       'The brand is now consistently live and shoppable across quick-commerce — with clean operations and steady repeat purchase.',
-    accent: 'from-violetglow/60 to-electric/30',
+    accent: 'from-espresso-700/60 to-coffee/30',
   },
   {
     slug: 'local-service-growth',
@@ -67,7 +67,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       'We built a fast, local-SEO site, optimized Google Business Profile, and ran tightly targeted Google Ads with call tracking.',
     result:
       'The business now appears prominently in local results with a measurable increase in calls and booked appointments.',
-    accent: 'from-electric/40 to-transparent',
+    accent: 'from-coffee/40 to-transparent',
   },
 ];
 
@@ -88,6 +88,60 @@ export const TESTIMONIALS = [
     quote:
       'From branding to marketplace management, everything feels designed and intentional. Our store finally looks and performs like a serious brand.',
     name: 'Owner, F&B Brand',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'Our organic traffic doubled within three months after their SEO overhaul. Technical fixes, content strategy, and link building — all handled end to end.',
+    name: 'Marketing Director, EdTech Startup',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'The AI chatbot they deployed handles 70% of inbound inquiries automatically. Our support team now focuses only on complex cases. Massive time savings.',
+    name: 'COO, Logistics Platform',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'Meta Ads ROAS went from 1.8x to 4.2x in six weeks. Creative testing framework, audience segmentation, and budget pacing — finally a system that scales.',
+    name: 'Growth Lead, Wellness D2C',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'Quick commerce catalog went live on Blinkit, Zepto, and Instamart in two weeks. Flawless onboarding, pricing sync, and promo calendar management.',
+    name: 'Category Manager, Beverage Brand',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'The brand identity system they delivered gives us consistency across every touchpoint — web, social, packaging, ads. Our team finally has clear guidelines.',
+    name: 'Creative Director, Fintech Company',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'Their software team built our entire internal dashboard in eight weeks. Clean architecture, weekly demos, and zero scope drift. The product just works.',
+    name: 'CTO, PropTech Startup',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'Google Ads campaigns restructured by BISSTECH cut our CPA by 38% while keeping volume steady. Bid strategy and negative-keyword hygiene made the difference.',
+    name: 'Performance Marketer, InsurTech',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'The rebrand and packaging redesign gave us shelf presence we never had. Sales team says prospects now recognise us before they read the label.',
+    name: 'Founder, Premium Skincare',
+    role: 'Illustrative testimonial placeholder — replace with a real client quote.',
+  },
+  {
+    quote:
+      'E-commerce migration to a headless stack lifted checkout conversion from 1.9% to 3.4%. Page speed and mobile UX were the real levers.',
+    name: 'E-commerce Director, Home Decor',
     role: 'Illustrative testimonial placeholder — replace with a real client quote.',
   },
 ];

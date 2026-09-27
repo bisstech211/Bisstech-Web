@@ -40,7 +40,7 @@ const fade: Variants = {
 export const WovenLightHero = () => {
   return (
     <section
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-ink"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-white"
       aria-label="BISSTECH hero"
     >
       <WovenCanvas />
@@ -50,7 +50,7 @@ export const WovenLightHero = () => {
         aria-hidden
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
-          background: 'radial-gradient(72% 62% at 50% 46%, transparent 42%, rgba(15,15,15,0.7) 100%)',
+          background: 'radial-gradient(72% 62% at 50% 46%, transparent 42%, rgba(43,33,24,0.08) 100%)',
         }}
       />
 
@@ -59,15 +59,15 @@ export const WovenLightHero = () => {
           variants={container}
           initial="hidden"
           animate="show"
-          className="font-display font-bold leading-[1.04] tracking-tight text-white"
-          style={{ fontSize: 'clamp(2.75rem, 8vw, 5.5rem)', textShadow: '0 0 60px rgba(229,9,20,0.35)' }}
+          className="font-display font-bold leading-[1.04] tracking-tight"
+          style={{ fontSize: 'clamp(2.75rem, 8vw, 5.5rem)', color: '#2B2118', textShadow: '0 0 60px rgba(111,78,55,0.15)' }}
         >
           <motion.span variants={word} className="block">
-            BUILD<span className="text-slate-500">.</span> GROW
-            <span className="text-slate-500">.</span>
+            BUILD<span style={{ color: '#8B6B52' }}>.</span> GROW
+            <span style={{ color: '#8B6B52' }}>.</span>
           </motion.span>
-          <motion.span variants={word} className="text-gradient block">
-            AUTOMATE<span className="text-slate-500">.</span>
+          <motion.span variants={word} className="block" style={{ color: '#2B2118' }}>
+            AUTOMATE<span style={{ color: '#8B6B52' }}>.</span>
           </motion.span>
         </motion.h1>
 
@@ -75,7 +75,8 @@ export const WovenLightHero = () => {
           variants={fade}
           initial="hidden"
           animate="show"
-          className="mx-auto mt-7 max-w-xl text-balance text-base text-cloud-300 sm:text-lg"
+          className="mx-auto mt-7 max-w-xl text-balance text-base sm:text-lg"
+          style={{ color: '#6F4E37' }}
         >
           An interactive field of light and data — BISSTECH weaves high-performance
           engineering, growth strategy, and automated workflows into one system.
@@ -87,10 +88,64 @@ export const WovenLightHero = () => {
           animate="show"
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <Button to="/contact" size="lg" withArrow>
+          <Button
+            to="/contact"
+            size="lg"
+            withArrow
+            className="border-2"
+            style={{
+              borderColor: 'var(--hero-cta-primary-border)',
+              backgroundColor: 'var(--hero-cta-primary-bg)',
+              color: 'var(--hero-cta-primary-text)',
+              transition: `all var(--hero-cta-primary-transition) ease-out`,
+            }}
+            onMouseEnter={(e) => {
+              const target = e.currentTarget;
+              target.style.backgroundColor = 'var(--hero-cta-primary-hover-bg)';
+              target.style.color = 'var(--hero-cta-primary-hover-text)';
+              target.style.borderColor = 'var(--hero-cta-primary-hover-border)';
+              target.style.boxShadow = 'var(--hero-cta-primary-hover-shadow)';
+              target.style.transform = `scale(var(--hero-cta-primary-scale))`;
+            }}
+            onMouseLeave={(e) => {
+              const target = e.currentTarget;
+              target.style.backgroundColor = 'var(--hero-cta-primary-bg)';
+              target.style.color = 'var(--hero-cta-primary-text)';
+              target.style.borderColor = 'var(--hero-cta-primary-border)';
+              target.style.boxShadow = 'var(--hero-cta-primary-shadow)';
+              target.style.transform = 'scale(1)';
+            }}
+          >
             Start a Project
           </Button>
-          <Button to="/services" size="lg" variant="ghost">
+          <Button
+            to="/services"
+            size="lg"
+            variant="ghost"
+            className="border-2"
+            style={{
+              borderColor: 'var(--hero-cta-secondary-border)',
+              backgroundColor: 'var(--hero-cta-secondary-bg)',
+              color: 'var(--hero-cta-secondary-text)',
+              transition: `all var(--hero-cta-secondary-transition) ease-out`,
+            }}
+            onMouseEnter={(e) => {
+              const target = e.currentTarget;
+              target.style.backgroundColor = 'var(--hero-cta-secondary-hover-bg)';
+              target.style.color = 'var(--hero-cta-secondary-hover-text)';
+              target.style.borderColor = 'var(--hero-cta-secondary-hover-border)';
+              target.style.boxShadow = 'var(--hero-cta-secondary-hover-shadow)';
+              target.style.transform = `scale(var(--hero-cta-secondary-scale))`;
+            }}
+            onMouseLeave={(e) => {
+              const target = e.currentTarget;
+              target.style.backgroundColor = 'var(--hero-cta-secondary-bg)';
+              target.style.color = 'var(--hero-cta-secondary-text)';
+              target.style.borderColor = 'var(--hero-cta-secondary-border)';
+              target.style.boxShadow = 'var(--hero-cta-secondary-shadow)';
+              target.style.transform = 'scale(1)';
+            }}
+          >
             Explore Services
           </Button>
         </motion.div>
@@ -99,7 +154,7 @@ export const WovenLightHero = () => {
   );
 };
 
-/** Optimized three.js particle field — one torus-knot "weave" of BISSTECH-red light. */
+/** Optimized three.js particle field — one torus-knot "weave" of coffee light. */
 const WovenCanvas = () => {
   const mountRef = useRef<HTMLDivElement>(null);
 
@@ -143,6 +198,14 @@ const WovenCanvas = () => {
     const total = torusKnot.attributes.position.count;
     const src = torusKnot.attributes.position.array as Float32Array;
 
+    // Coffee palette
+    const coffeePalette = [
+      '#2B2118',
+      '#6F4E37',
+      '#8B6B52',
+      '#A98262',
+      '#C8B6A6'
+    ];
     const c = new THREE.Color();
     for (let i = 0; i < particleCount; i++) {
       const vi = (i % total) * 3;
@@ -155,9 +218,8 @@ const WovenCanvas = () => {
       original[i * 3] = x;
       original[i * 3 + 1] = y;
       original[i * 3 + 2] = z;
-      // BISSTECH palette — vibrant red (hue 350–360 ∪ 0–12)
-      const hue = Math.random() < 0.5 ? Math.random() * 12 : 350 + Math.random() * 10;
-      c.setHSL(hue, 0.65 + Math.random() * 0.3, 0.5 + Math.random() * 0.18);
+      // Coffee palette
+      c.set(coffeePalette[i % coffeePalette.length]);
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -171,8 +233,8 @@ const WovenCanvas = () => {
       size: 0.02,
       vertexColors: true,
       transparent: true,
-      opacity: 0.95,
-      blending: THREE.AdditiveBlending,
+      opacity: 0.8,
+      blending: THREE.NormalBlending,
       depthWrite: false,
     });
     const points = new THREE.Points(geometry, material);

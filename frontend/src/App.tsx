@@ -14,6 +14,7 @@ import { SiteStructuredData } from './lib/seo';
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Services = lazy(() => import('./pages/Services'));
+const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -23,6 +24,7 @@ const routes = [
   { path: '/', element: <Home /> },
   { path: '/about', element: <About /> },
   { path: '/services', element: <Services /> },
+  { path: '/services/:slug', element: <ServiceDetail /> },
   { path: '/blog', element: <Blog /> },
   { path: '/blog/:slug', element: <BlogPost /> },
   { path: '/contact', element: <Contact /> },

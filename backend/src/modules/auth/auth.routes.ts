@@ -3,14 +3,15 @@ import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '../../lib/prisma';
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../lib/jwt';
+import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../../lib/jwt';
 import { requireAuth, type AuthRequest } from '../../middleware/auth';
 import { sendOtpEmail } from '../../lib/mailer';
+import { blacklistToken, blacklistAllUserTokens, isTokenBlacklisted } from '../../lib/blacklist';
 import { ok, fail } from '../../utils/response';
 
 const router = Router();
 
-const loginSchema = z.object({ email: z.string().email(), password: z.string().min(1) });
+const loginSchema = z.object({ email: z.string().email(), password: z.string().min(8) });
 
 router.post('/login', async (req, res) => {
   const parsed = loginSchema.safeParse(req.body);
@@ -18,6 +19,7 @@ router.post('/login', async (req, res) => {
   const { email, password } = parsed.data;
   const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
   if (!user || !user.isActive) return fail(res, 401, 'Invalid credentials');
+  // Validate password length before bcrypt compare
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return fail(res, 401, 'Invalid credentials');
 
@@ -34,11 +36,38 @@ router.post('/login', async (req, res) => {
   });
 });
 
+router.post('/logout', requireAuth, async (req: AuthRequest, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  if (token) {
+    try {
+      const payload = verifyAccessToken(token);
+      await blacklistToken(payload, 'logout');
+    } catch {
+      // if access token is expired/invalid, still succeed (logout is best-effort)
+    }
+  }
+  // Also blacklist the refresh token if provided
+  const { refreshToken } = req.body as { refreshToken?: string };
+  if (refreshToken) {
+    try {
+      const payload = verifyRefreshToken(refreshToken);
+      await blacklistToken(payload, 'logout');
+    } catch { /* ignore */ }
+  }
+  return ok(res, null, 'Logged out');
+});
+
 router.post('/refresh', async (req, res) => {
   const { refreshToken } = req.body as { refreshToken?: string };
   if (!refreshToken) return fail(res, 400, 'Missing refresh token');
   try {
     const payload = verifyRefreshToken(refreshToken);
+    // Check blacklist
+    const jti = (payload as { jti?: string | number }).jti;
+    if (jti && await isTokenBlacklisted(String(jti))) {
+      return fail(res, 401, 'Refresh token revoked');
+    }
     const user = await prisma.user.findUnique({ where: { id: payload.userId } });
     if (!user || !user.isActive) return fail(res, 401, 'User not found or inactive');
     const newPayload = { userId: user.id, role: user.role, email: user.email };
@@ -64,6 +93,8 @@ router.post('/change-password', requireAuth, async (req: AuthRequest, res) => {
   if (!valid) return fail(res, 401, 'Current password incorrect');
   const hash = await bcrypt.hash(parsed.data.newPassword, 10);
   await prisma.user.update({ where: { id: user.id }, data: { passwordHash: hash } });
+  // Invalidate all tokens for this user — previous sessions are no longer valid
+  await blacklistAllUserTokens(user.id, 'password_change');
   return ok(res, null, 'Password updated');
 });
 
@@ -88,10 +119,9 @@ router.post('/forgot-password', async (req, res) => {
   const email = parsed.data.email.toLowerCase().trim();
 
   const user = await prisma.user.findUnique({ where: { email } });
-  // Always respond 200 to avoid email enumeration in production; but for admin UX
-  // we still need to tell the caller if email is not registered.
+  // Generic response — do not reveal whether email exists (prevents enumeration)
   if (!user || !user.isActive) {
-    return fail(res, 404, 'No admin account found with this email');
+    return ok(res, null, 'If the account exists, an OTP has been sent.');
   }
 
   // Resend cooldown: block if last OTP was created < 60s ago
@@ -127,7 +157,7 @@ router.post('/forgot-password', async (req, res) => {
   // Audit only on successful delivery (no OTP in log)
   prisma.auditLog.create({ data: { userId: user.id, action: 'forgot_password_otp_sent', resource: 'auth', ip: req.ip, metadata: JSON.stringify({ email }) } }).catch(() => {});
 
-  return ok(res, { expiresAt: expiresAt.toISOString() }, 'OTP sent to your email');
+  return ok(res, { expiresAt: expiresAt.toISOString() }, 'If the account exists, an OTP has been sent.');
 });
 
 // POST /api/v1/auth/verify-otp  { email, otp }
@@ -141,7 +171,7 @@ router.post('/verify-otp', async (req, res) => {
     where: { email },
     orderBy: { createdAt: 'desc' },
   });
-  if (!record) return fail(res, 400, 'No OTP found. Please request a new code.');
+  if (!record) return fail(res, 400, 'If the account exists, an OTP has been sent.');
   if (new Date(record.expiresAt).getTime() < Date.now()) {
     await prisma.passwordResetOtp.delete({ where: { id: record.id } }).catch(() => {});
     return fail(res, 400, 'OTP has expired. Please request a new code.');
@@ -186,7 +216,7 @@ router.post('/reset-password', async (req, res) => {
     where: { email },
     orderBy: { createdAt: 'desc' },
   });
-  if (!record) return fail(res, 400, 'No OTP found. Please request a new code.');
+  if (!record) return fail(res, 400, 'If the account exists, an OTP has been sent.');
   if (new Date(record.expiresAt).getTime() < Date.now()) {
     await prisma.passwordResetOtp.delete({ where: { id: record.id } }).catch(() => {});
     return fail(res, 400, 'OTP has expired. Please request a new code.');
@@ -210,6 +240,9 @@ router.post('/reset-password', async (req, res) => {
   const hash = await bcrypt.hash(newPassword, 10);
   await prisma.user.update({ where: { id: user.id }, data: { passwordHash: hash } });
   await prisma.passwordResetOtp.deleteMany({ where: { email } });
+
+  // Invalidate all tokens for this user after password reset
+  await blacklistAllUserTokens(user.id, 'password_change');
 
   prisma.auditLog.create({ data: { userId: user.id, action: 'password_reset', resource: 'auth', ip: req.ip } }).catch(() => {});
 

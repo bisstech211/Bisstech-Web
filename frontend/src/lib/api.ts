@@ -1,9 +1,8 @@
 // Central API client for frontend → backend communication.
 // Falls back gracefully when the backend is unavailable (static data remains).
 
-const BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || 'http://localhost:4000';
-
-export const API_BASE = `${BASE}/api/v1`;
+// Use relative path so requests go through Vite proxy (/api → http://127.0.0.1:4000)
+export const API_BASE = '/api/v1';
 
 type ApiOk<T> = { success: true; data: T; pagination?: { total: number; page: number; limit: number; pages: number } };
 type ApiErr = { success: false; error: string };
@@ -19,6 +18,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiOk<T>> {
   }
   return json as ApiOk<T>;
 }
+
+// Generic API client for admin-style calls
+export const api = {
+  get: <T>(path: string) => request<T>(path),
+  post: <T>(path: string, data: unknown) => request<T>(path, { method: 'POST', body: JSON.stringify(data) }),
+  put: <T>(path: string, data: unknown) => request<T>(path, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+};
 
 // Public blog
 export function fetchBlogPosts(params: { page?: number; limit?: number; search?: string; category?: string } = {}) {
@@ -39,11 +46,6 @@ export function fetchBlogCategories() {
   return request<Array<{ id: string; name: string; slug: string }>>('/blog/public-categories');
 }
 
-// Public services
-export function fetchServices() {
-  return request<unknown[]>('/services/public');
-}
-
 // Public site settings (safe tracking only)
 export function fetchSiteSettings() {
   return request<{
@@ -61,6 +63,23 @@ export function fetchProjects() { return request<unknown[]>('/content/projects/p
 export function fetchTestimonials() { return request<unknown[]>('/content/testimonials/public'); }
 export function fetchTeam() { return request<unknown[]>('/content/team/public'); }
 export function fetchFaqs() { return request<unknown[]>('/content/faqs/public'); }
+
+// Public case studies
+export function fetchCaseStudies() { return request<unknown[]>('/case-studies/public'); }
+
+export function fetchCaseStudyBySlug(slug: string) {
+  return request<unknown>(`/case-studies/public/${encodeURIComponent(slug)}`);
+}
+
+// Public services (includes banner images)
+export function fetchServices() {
+  return request<unknown[]>('/services/public');
+}
+
+// Public website settings (all appearance settings)
+export function fetchWebsiteSettings() {
+  return request<Record<string, unknown>>('/settings/public');
+}
 
 // Leads / contact
 export function submitLead(payload: Record<string, unknown>) {

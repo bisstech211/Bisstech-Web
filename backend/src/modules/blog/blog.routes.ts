@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 import { prisma } from '../../lib/prisma';
 import { requireAuth } from '../../middleware/auth';
 import { ok, created, fail, paginated } from '../../utils/response';
 
 const router = Router();
+
+// Initialize DOMPurify with JSDOM for server-side sanitization
+const window = new JSDOM('').window;
+const purify = DOMPurify(window);
 
 // ── Public: list published posts
 router.get('/public', async (req, res) => {
@@ -51,20 +57,20 @@ router.get('/public-categories', async (_req, res) => {
 const upsertSchema = z.object({
   title: z.string().min(3),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/),
-  excerpt: z.string().optional(),
+  excerpt: z.string().nullable().optional().or(z.literal('')),
   content: z.string().min(10),
-  featuredImage: z.string().optional(),
-  author: z.string().optional(),
-  categoryId: z.string().optional().nullable(),
+  featuredImage: z.string().nullable().optional().or(z.literal('')),
+  author: z.string().nullable().optional().or(z.literal('')),
+  categoryId: z.string().nullable().optional().or(z.literal('')),
   tagIds: z.array(z.string()).optional(),
   status: z.enum(['DRAFT', 'PUBLISHED', 'SCHEDULED']).optional(),
   featured: z.boolean().optional(),
-  seoTitle: z.string().optional(),
-  seoDescription: z.string().optional(),
-  ogImage: z.string().optional(),
-  canonicalUrl: z.string().optional(),
-  readingTime: z.string().optional(),
-  publishedAt: z.string().optional().nullable(),
+  seoTitle: z.string().nullable().optional().or(z.literal('')),
+  seoDescription: z.string().nullable().optional().or(z.literal('')),
+  ogImage: z.string().nullable().optional().or(z.literal('')),
+  canonicalUrl: z.string().nullable().optional().or(z.literal('')),
+  readingTime: z.string().nullable().optional().or(z.literal('')),
+  publishedAt: z.string().nullable().optional().or(z.literal('')),
 });
 
 router.use(requireAuth);
@@ -94,16 +100,30 @@ router.post('/', async (req, res) => {
   const parsed = upsertSchema.safeParse(req.body);
   if (!parsed.success) return fail(res, 400, 'Validation error', parsed.error.flatten());
   const d = parsed.data;
+  // Sanitize HTML content to prevent XSS
+  const sanitizedContent = purify.sanitize(d.content, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'style', 'target', 'rel'],
+    ALLOW_DATA_ATTR: true,
+  });
+  let parsedPublishedAt: Date | null = null;
+  if (d.publishedAt && typeof d.publishedAt === 'string' && d.publishedAt.trim() !== '') {
+    const dt = new Date(d.publishedAt);
+    if (!isNaN(dt.getTime())) parsedPublishedAt = dt;
+  } else if (d.status === 'PUBLISHED') {
+    parsedPublishedAt = new Date();
+  }
+
   const post = await prisma.blogPost.create({
     data: {
-      title: d.title, slug: d.slug, excerpt: d.excerpt, content: d.content,
-      featuredImage: d.featuredImage, author: d.author ?? 'BISSTECH Team',
+      title: d.title, slug: d.slug, excerpt: d.excerpt || null, content: sanitizedContent,
+      featuredImage: d.featuredImage || null, author: d.author ?? 'BISSTECH Team',
       categoryId: d.categoryId || null,
       status: (d.status as never) ?? 'DRAFT',
       featured: d.featured ?? false,
-      seoTitle: d.seoTitle, seoDescription: d.seoDescription, ogImage: d.ogImage,
-      canonicalUrl: d.canonicalUrl, readingTime: d.readingTime,
-      publishedAt: d.publishedAt ? new Date(d.publishedAt) : d.status === 'PUBLISHED' ? new Date() : null,
+      seoTitle: d.seoTitle || null, seoDescription: d.seoDescription || null, ogImage: d.ogImage || null,
+      canonicalUrl: d.canonicalUrl || null, readingTime: d.readingTime || null,
+      publishedAt: parsedPublishedAt,
       tags: d.tagIds?.length ? { connect: d.tagIds.map((id) => ({ id })) } : undefined,
     },
     include: { category: true, tags: true },
@@ -116,8 +136,23 @@ router.put('/:id', async (req, res) => {
   if (!parsed.success) return fail(res, 400, 'Validation error', parsed.error.flatten());
   const d = parsed.data;
   const data: Record<string, unknown> = { ...d };
+  // Sanitize HTML content if provided
+  if (d.content !== undefined) {
+    data.content = purify.sanitize(d.content, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div'],
+      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'style', 'target', 'rel'],
+      ALLOW_DATA_ATTR: true,
+    });
+  }
   if (d.tagIds) { (data as Record<string, unknown>).tags = { set: d.tagIds.map((id) => ({ id })) }; delete (data as Record<string, unknown>).tagIds; }
-  if (d.publishedAt !== undefined) data.publishedAt = d.publishedAt ? new Date(d.publishedAt) : null;
+  if (d.publishedAt !== undefined) {
+    if (d.publishedAt && typeof d.publishedAt === 'string' && d.publishedAt.trim() !== '') {
+      const dt = new Date(d.publishedAt);
+      data.publishedAt = isNaN(dt.getTime()) ? null : dt;
+    } else {
+      data.publishedAt = null;
+    }
+  }
   const post = await prisma.blogPost.update({ where: { id: req.params.id }, data: data as never, include: { category: true, tags: true } });
   return ok(res, post);
 });

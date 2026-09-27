@@ -8,9 +8,9 @@ import { Reveal } from '../ui/Reveal';
  */
 export function TrustMarquee() {
   return (
-    <section className="border-y border-white/[0.05] bg-ink-950/60 py-10" aria-label="Our capabilities">
+    <section className="border-y border-espresso-950/08 bg-cream-50 py-10" aria-label="Our capabilities">
       <Reveal y={14} amount={0.6}>
-        <p className="mb-6 text-center text-[11px] uppercase tracking-[0.3em] text-cloud-600">
+        <p className="mb-6 text-center text-[11px] uppercase tracking-[0.3em] text-espresso-400">
           One agency. Every growth lever.
         </p>
       </Reveal>

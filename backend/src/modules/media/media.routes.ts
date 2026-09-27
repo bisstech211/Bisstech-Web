@@ -8,7 +8,7 @@ import { ok, fail, paginated } from '../../utils/response';
 
 const router = Router();
 
-const uploadDir = process.env.UPLOAD_DIR || './uploads';
+const uploadDir = process.env.UPLOAD_DIR || './uploads'; // Allow optional folder query param for organized storage
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
@@ -22,9 +22,24 @@ const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
+    // Allow optional folder via query param (e.g., ?folder=logos)
     const allowed = ['image/jpeg','image/png','image/webp','image/avif','image/gif','image/svg+xml','application/pdf'];
-    if (allowed.includes(file.mimetype)) cb(null, true);
-    else cb(new Error('File type not allowed'));
+    // Some clients may send generic application/octet-stream; fallback to extension check
+    const ext = require('path').extname(file.originalname).toLowerCase();
+    const extMap: Record<string, string> = {
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+      '.webp': 'image/webp',
+      '.avif': 'image/avif',
+      '.gif': 'image/gif',
+      '.svg': 'image/svg+xml',
+      '.pdf': 'application/pdf',
+    };
+    const inferred = extMap[ext] || '';
+    const mime = file.mimetype === 'application/octet-stream' ? inferred : file.mimetype;
+    if (allowed.includes(mime)) cb(null, true);
+    else cb(new Error('File type not allowed: ' + file.mimetype));
   },
 });
 
@@ -57,7 +72,8 @@ router.get('/', async (req, res) => {
 router.post('/upload', upload.array('files', 10), async (req, res) => {
   const files = req.files as Express.Multer.File[] | undefined;
   if (!files?.length) return fail(res, 400, 'No files uploaded');
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  // Use FRONTEND_URL from env for correct URL generation behind proxy
+  const baseUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get('host')}`;
   const records = await Promise.all(files.map((f) =>
     prisma.media.create({
       data: {

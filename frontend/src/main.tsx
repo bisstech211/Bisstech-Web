@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import App from './App';
+import { WebsiteSettingsProvider } from './hooks/useWebsiteSettings.tsx';
+import { TechnologiesProvider } from './hooks/useTechnologies.tsx';
 import './index.css';
 
 // Respects prefers-reduced-motion globally for all Framer Motion animations.
@@ -12,7 +14,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <MotionConfig reducedMotion={reducedMotionQuery ? 'always' : 'never'}>
-        <App />
+        <WebsiteSettingsProvider>
+          <TechnologiesProvider>
+            <App />
+          </TechnologiesProvider>
+        </WebsiteSettingsProvider>
       </MotionConfig>
     </BrowserRouter>
   </React.StrictMode>,

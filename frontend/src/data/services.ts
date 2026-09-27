@@ -1,8 +1,10 @@
 import {
   TrendingUp,
   Code2,
-  ShoppingBag,
+  Smartphone,
+  Wrench,
   BrainCircuit,
+  ShoppingBag,
   PenTool,
   type LucideIcon,
 } from 'lucide-react';
@@ -25,6 +27,18 @@ export type Service = {
   benefits: string[];
   deliverables: string[];
   process: { step: string; detail: string }[];
+  /** raw API row when hydrated from backend — useful for detail pages */
+  _api?: unknown;
+  /** Background image for service card (1600x1200, 4:3, WebP/AVIF) */
+  backgroundImage?: string;
+  backgroundImageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  /** Banner image for service section accordion (1200x400, 16:9, WebP/AVIF) */
+  bannerImage?: string;
+  bannerImageAlt?: string;
+  bannerImageWidth?: number | null;
+  bannerImageHeight?: number | null;
 };
 
 export const SERVICES: Service[] = [
@@ -120,6 +134,10 @@ export const SERVICES: Service[] = [
       { step: 'Launch', detail: 'Campaigns, content and tracking go live with clean measurement.' },
       { step: 'Optimize', detail: 'We iterate on creative, targeting and bidding to scale what works.' },
     ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
   },
   {
     id: 'website-development',
@@ -190,10 +208,162 @@ export const SERVICES: Service[] = [
       { step: 'Build', detail: 'We develop with modern, performant, scalable technology.' },
       { step: 'Launch', detail: 'We test, optimize, deploy and support you post-launch.' },
     ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
+  },
+  {
+    id: 'app-development',
+    number: '03',
+    title: 'App Development',
+    short: 'Custom, scalable and high-performance mobile apps built for modern businesses.',
+    description:
+      'Design and develop modern, scalable, high-performance mobile applications for iOS and Android using Flutter and React Native. From concept to App Store and Play Store deployment — we build apps that grow with your business.',
+    icon: Smartphone,
+    groups: [
+      {
+        title: 'What We Build',
+        items: [
+          'iOS App Development',
+          'Android App Development',
+          'Cross-Platform Apps (Flutter / React Native)',
+          'Progressive Web Apps (PWA)',
+          'Enterprise Mobile Apps',
+          'Consumer-Facing Apps',
+          'On-Demand Service Apps',
+          'E-commerce Mobile Apps',
+          'SaaS Mobile Apps',
+          'Healthcare & Fitness Apps',
+          'FinTech & Payment Apps',
+          'Social & Community Apps',
+          'IoT & Wearable Apps',
+          'AR/VR Experiences',
+          'App Store & Play Store Deployment',
+        ],
+      },
+      {
+        title: 'What We Cover',
+        items: [
+          'UI/UX Design for Mobile',
+          'Native & Cross-Platform Development',
+          'Backend API Development',
+          'Database Design & Integration',
+          'Authentication & Security',
+          'Push Notifications',
+          'In-App Purchases & Subscriptions',
+          'Payment Gateway Integration',
+          'Analytics & Crash Reporting',
+          'Performance Optimization',
+          'Offline-First Architecture',
+          'App Store Optimization (ASO)',
+          'CI/CD Pipeline Setup',
+          'Maintenance & Updates',
+          'Legacy App Modernization',
+        ],
+      },
+    ],
+    benefits: [
+      'Native performance with cross-platform efficiency',
+      'Faster time-to-market with Flutter / React Native',
+      'Scalable architecture that grows with your user base',
+      'App Store & Play Store ready with ASO optimization',
+    ],
+    deliverables: [
+      'Design system & interactive prototypes',
+      'Production-ready source code (iOS / Android / Web)',
+      'Backend APIs, database & admin dashboard',
+      'App Store / Play Store deployment & launch support',
+    ],
+    extra: [
+      'Flutter / React Native',
+      'Firebase / Supabase / Custom Backend',
+      'RevenueCat for Subscriptions',
+      'Mixpanel / Amplitude Analytics',
+      'TestFlight / Internal Testing',
+    ],
+    process: [
+      { step: 'Discover', detail: 'We understand your users, goals and technical requirements.' },
+      { step: 'Design', detail: 'We craft mobile-first UX and pixel-perfect UI in tight loops.' },
+      { step: 'Build', detail: 'We develop with Flutter / React Native and a scalable backend.' },
+      { step: 'Launch', detail: 'We test, optimize, submit to stores and support post-launch.' },
+    ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
+  },
+  {
+    id: 'software-development',
+    number: '04',
+    title: 'Software Development',
+    short: 'Custom software solutions designed to streamline operations, solve complex business challenges and scale with your business.',
+    description:
+      'We design and develop scalable software solutions that simplify complex processes, improve efficiency and help businesses grow with technology built around their specific needs.',
+    icon: Wrench,
+    groups: [
+      {
+        title: 'What We Build',
+        items: [
+          'Custom Software Development',
+          'Business Management Software',
+          'CRM Development',
+          'ERP Development',
+          'Inventory Management Systems',
+          'Billing & Invoicing Software',
+          'Business Automation Software',
+          'SaaS Product Development',
+          'Web Application Development',
+          'Admin Dashboard Development',
+          'Reporting & Analytics Systems',
+          'Cloud-Based Software Solutions',
+        ],
+      },
+      {
+        title: 'What We Cover',
+        items: [
+          'API Development & Integration',
+          'Database Development',
+          'Third-Party Integrations',
+          'User Authentication & Role Management',
+          'Software Maintenance & Support',
+        ],
+      },
+    ],
+    benefits: [
+      'Software that fits your business, not a one-size-fits-all product',
+      'Complex processes simplified into one streamlined system',
+      'Real-time visibility across operations and performance',
+      'A scalable foundation that grows with your business',
+    ],
+    deliverables: [
+      'Discovery & technical architecture document',
+      'Design system & interactive prototypes',
+      'Production-ready source code & documentation',
+      'Deployment, training & ongoing support plan',
+    ],
+    extra: [
+      'Custom Software Development',
+      'SaaS Product Development',
+      'Web Application Development',
+      'API Development & Integration',
+      'Cloud-Based Software Solutions',
+      'Software Maintenance & Support',
+    ],
+    process: [
+      { step: 'Discover', detail: 'We map your processes, goals and technical requirements.' },
+      { step: 'Design', detail: 'We architect the system and craft the UX in tight loops.' },
+      { step: 'Build', detail: 'We develop with modern, scalable, well-tested technology.' },
+      { step: 'Launch', detail: 'We deploy, train your team and support you post-launch.' },
+    ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
   },
   {
     id: 'ecommerce-management',
-    number: '03',
+    number: '06',
     title: 'E-commerce & Quick Commerce Management',
     short: 'Build, manage and scale online commerce.',
     description:
@@ -251,10 +421,14 @@ export const SERVICES: Service[] = [
       { step: 'Manage', detail: 'Day-to-day operations run smoothly and reliably.' },
       { step: 'Scale', detail: 'We expand channels and promotions to grow revenue.' },
     ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
   },
   {
     id: 'ai-automation',
-    number: '04',
+    number: '06',
     title: 'AI Automation',
     short: 'Smarter workflows. Less repetitive work.',
     description:
@@ -307,10 +481,14 @@ export const SERVICES: Service[] = [
       { step: 'Build', detail: 'We ship the automation with careful testing.' },
       { step: 'Improve', detail: 'We monitor performance and keep improving outputs.' },
     ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
   },
   {
     id: 'graphic-design',
-    number: '05',
+    number: '07',
     title: 'Graphic Design',
     short: 'Brands and creatives that stand out.',
     description:
@@ -366,6 +544,10 @@ export const SERVICES: Service[] = [
       { step: 'Refine', detail: 'We polish the chosen direction into production assets.' },
       { step: 'Deliver', detail: 'You receive organized, ready-to-use files.' },
     ],
+    backgroundImage: '',
+    backgroundImageAlt: '',
+    imageWidth: 1600,
+    imageHeight: 1200,
   },
 ];
 

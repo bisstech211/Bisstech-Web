@@ -32,7 +32,7 @@ const LEVERS = [
  */
 export function GrowthSection() {
   return (
-    <section className="section-pad relative bg-ink-950/60" aria-label="Digital growth">
+    <section className="section-pad relative bg-cream-50" aria-label="Digital growth">
       <div className="container-bt grid items-center gap-16 lg:grid-cols-2">
         <div>
           <SectionHeading
@@ -49,12 +49,12 @@ export function GrowthSection() {
             {LEVERS.map((l, i) => (
               <Reveal key={l.title} delay={i * 0.08}>
                 <div className="group flex gap-5">
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-electric transition-colors duration-300 group-hover:bg-electric group-hover:text-white">
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-espresso-950/10 bg-white text-coffee transition-colors duration-300 group-hover:bg-coffee group-hover:text-cream-50">
                     <l.icon className="h-5 w-5" />
                   </span>
                   <div>
-                    <h3 className="font-display text-lg font-semibold text-white">{l.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-cloud-400">{l.detail}</p>
+                    <h3 className="font-display text-lg font-semibold text-espresso-950">{l.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-espresso-600">{l.detail}</p>
                   </div>
                 </div>
               </Reveal>
@@ -64,18 +64,18 @@ export function GrowthSection() {
 
         {/* Illustrative dashboard */}
         <Reveal delay={0.15}>
-          <div className="relative rounded-3xl border border-white/[0.08] bg-ink-900/80 p-6 shadow-card sm:p-8">
-            <div aria-hidden className="absolute -inset-px -z-10 rounded-3xl bg-gradient-to-br from-electric/20 to-violetglow/10 blur-xl" />
+          <div className="relative rounded-3xl border border-espresso-950/08 bg-white p-6 shadow-card-light sm:p-8">
+            <div aria-hidden className="absolute -inset-px -z-10 rounded-3xl bg-gradient-to-br from-coffee/10 to-espresso-800/05 blur-xl" />
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-display text-sm font-semibold text-white">Growth dashboard</p>
-                <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-cloud-600">
+                <p className="font-display text-sm font-semibold text-espresso-950">Growth dashboard</p>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-espresso-400">
                   Illustrative sample — not client data
                 </p>
               </div>
-              <span className="flex items-center gap-1.5 rounded-full border border-electric/30 bg-electric/10 px-3 py-1 text-[11px] font-medium text-electric-200">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-electric" />
+              <span className="flex items-center gap-1.5 rounded-full border border-coffee/30 bg-coffee/10 px-3 py-1 text-[11px] font-medium text-coffee">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coffee" />
                 Live
               </span>
             </div>
@@ -85,18 +85,18 @@ export function GrowthSection() {
               <svg viewBox="0 0 320 140" className="h-40 w-full" aria-hidden>
                 <defs>
                   <linearGradient id="growthFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" stopOpacity="0.35" />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#6F4E37" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#6F4E37" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 {/* grid lines */}
                 {[20, 60, 100, 140].map((y) => (
-                  <line key={y} x1="0" y1={y} x2="320" y2={y} stroke="rgba(255,255,255,0.06)" />
+                  <line key={y} x1="0" y1={y} x2="320" y2={y} stroke="rgba(61,43,31,0.06)" />
                 ))}
                 <motion.path
                   d="M0,120 C40,116 60,100 90,96 C120,92 140,70 170,64 C200,58 230,40 260,34 C290,28 305,20 320,14"
                   fill="none"
-                  stroke="#22c55e"
+                  stroke="#6F4E37"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
@@ -122,9 +122,9 @@ export function GrowthSection() {
                 { label: 'Qualified leads', value: '↑↑' },
                 { label: 'Automation', value: 'On' },
               ].map((k) => (
-                <div key={k.label} className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-3">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-cloud-500">{k.label}</p>
-                  <p className="mt-1 font-display text-base font-bold text-electric">{k.value}</p>
+                <div key={k.label} className="rounded-xl border border-espresso-950/06 bg-cream-100 p-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-espresso-500">{k.label}</p>
+                  <p className="mt-1 font-display text-base font-bold text-coffee">{k.value}</p>
                 </div>
               ))}
             </div>
